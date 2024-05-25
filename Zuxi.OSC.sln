@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuxi.OSC", "Zuxi.OSC.csproj", "{B2BDB9F9-84AB-4366-938D-DDDAA15299BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuxi.OSC.Media", "..\Zuxi.OSC.Media\Zuxi.OSC.Media.csproj", "{FC9154ED-8234-426A-96FD-A159BEA21A88}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuxi.OSC.Config", "..\Zuxi.OSC.Config\Zuxi.OSC.Config.csproj", "{A82895E1-421C-4C62-A5B0-6A8111739EBA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuxi.OSC.HeartRate", "..\Zuxi.OSC.HeartRate\Zuxi.OSC.HeartRate.csproj", "{33C0B60A-4418-4200-B6C1-9E2E483F5B22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuxi.OSC.Module.FriendRequest", "..\Zuxi.OSC.FriendRequests\Zuxi.OSC.Module.FriendRequest.csproj", "{0CE1E04A-4B4B-41EC-AC8D-A7E92A5E67E0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zuxi.OSC.WebModule", "..\Zuxi.OSC.WebModule\Zuxi.OSC.WebModule.csproj", "{AD19D988-5425-4A98-A712-2533A6900797}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B2BDB9F9-84AB-4366-938D-DDDAA15299BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2BDB9F9-84AB-4366-938D-DDDAA15299BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2BDB9F9-84AB-4366-938D-DDDAA15299BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2BDB9F9-84AB-4366-938D-DDDAA15299BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC9154ED-8234-426A-96FD-A159BEA21A88}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC9154ED-8234-426A-96FD-A159BEA21A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC9154ED-8234-426A-96FD-A159BEA21A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC9154ED-8234-426A-96FD-A159BEA21A88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A82895E1-421C-4C62-A5B0-6A8111739EBA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82895E1-421C-4C62-A5B0-6A8111739EBA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82895E1-421C-4C62-A5B0-6A8111739EBA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82895E1-421C-4C62-A5B0-6A8111739EBA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{33C0B60A-4418-4200-B6C1-9E2E483F5B22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{33C0B60A-4418-4200-B6C1-9E2E483F5B22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{33C0B60A-4418-4200-B6C1-9E2E483F5B22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{33C0B60A-4418-4200-B6C1-9E2E483F5B22}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CE1E04A-4B4B-41EC-AC8D-A7E92A5E67E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CE1E04A-4B4B-41EC-AC8D-A7E92A5E67E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CE1E04A-4B4B-41EC-AC8D-A7E92A5E67E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CE1E04A-4B4B-41EC-AC8D-A7E92A5E67E0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD19D988-5425-4A98-A712-2533A6900797}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD19D988-5425-4A98-A712-2533A6900797}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD19D988-5425-4A98-A712-2533A6900797}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD19D988-5425-4A98-A712-2533A6900797}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1091EBF9-9FE7-490F-8176-8215BF060F02}
+	EndGlobalSection
+EndGlobal
