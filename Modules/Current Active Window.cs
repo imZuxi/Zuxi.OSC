@@ -29,20 +29,20 @@ namespace Zuxi.OSC.Modules
                 if (GetWindowText(hWnd, title, nChars) > 0)
                 {
                     var WindowName = title.ToString();
-                    if (BlacklistedWindows.Contains(WindowName.ToLower()))
+                    if (BlacklistedWindows.Any(window => WindowName.ToLower().Contains(window.ToLower())))
                     {
                         return null;
                     }
 
+                    if (WindowName == "Cider") return "Apple Music";
+                   
                     GetLastIndex(WindowName, '\\', out WindowName);
-
                     if (WindowName.Contains("Chrome") || WindowName.Contains("FireFox"))
                         GetLastIndex(WindowName, '-', out WindowName);
                     if (WindowName.Contains("Brave"))
                         GetFirstIndex(WindowName, '-', out WindowName);
-
                     Replace(WindowName, "Lite", "", out WindowName);
-
+                    
                     WindowName.Replace(".exe", "");
                     return WindowName.Trim();
                 }
