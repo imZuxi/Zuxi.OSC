@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Nodes;
@@ -21,7 +22,20 @@ namespace Zuxi.OSC.Modules
                 // btw this took 3 hours to figure out since this project needed to be upgraded to .net core so i used net 8 org now 6 lmao 
 
                 var gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+
+                var playbackInfo = gsmtcsm.GetCurrentSession().GetPlaybackInfo();
+
+                Console.WriteLine(playbackInfo.PlaybackStatus.ToString());
+                if (playbackInfo.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Paused)
+                {
+                    return "";
+                }
+
                 var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+
+                
+
+              //  if (mediaProperties.)
                 // Apple Music is kinda stupid ngl this is to fix it i know its stupid idc
                 return string.IsNullOrEmpty(mediaProperties.Artist) ? mediaProperties.AlbumArtist.Split('-')[0] : 
                 string.Format("{0} - {1}", mediaProperties.Title, mediaProperties.Artist);

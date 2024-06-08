@@ -75,14 +75,8 @@ namespace Zuxi.OSC
             Console.WriteLine("Application closing...");
 
             ChatboxManager.SendToChatBox("", true);
-            // give chatbox time to close down
             Thread.Sleep(1000);
-            // Perform any necessary cleanup or additional logic here
-
-            // Optionally set e.Cancel to true to prevent the application from closing immediately
-            // e.Cancel = true;
-
-            // Exit the application
+         
             Environment.Exit(0);
         }
     }
