@@ -1,14 +1,8 @@
 ﻿using BuildSoft.VRChat.Osc;
-using System;
-using System.IO;
-using System.Net.WebSockets;
-using System.Threading;
-using Zuxi.OSC.Config;
-using Zuxi.OSC.Media;
+using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
 using Zuxi.OSC.Modules.FriendRequests;
-using Zuxi.OSC.Utils;
-
+using Zuxi.OSC.utility;
 namespace Zuxi.OSC
 {
     internal class Program
@@ -21,29 +15,25 @@ namespace Zuxi.OSC
             try
             {
 
-              Console.WriteLine(Current_Active_Window.Get());
+                Console.WriteLine(Current_Active_Window.Get());
                 Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress);
-                Utils.GeneralUtils.IsVR();
-
+                // Utils.GeneralUtils.IsVR();
+                Console.WriteLine(MediaPlayback.GetCurrentSong());
                 Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
 
-                JsonConfig.LoadData();
+                Config.LoadData();
 
                 Console.ForegroundColor = ConsoleColor.Cyan;
 
                 string LastWindow = Environment.NewLine;
 
-                OscConnectionSettings.SendPort = 9005;
+                OscConnectionSettings.SendPort = 9000;
 
-              //  OscUtility.Initialize();
-
-             //   Zuxi.OSC.WebModule.WebSocket.CreateSocket();
-             
                 if (Environment.CommandLine.ToLower().Contains("--zreqo"))
                 {
                     NormalChatbox = false;
 
-                    Console.WriteLine(MediaPlayback.GetSongInfo());
+                    Console.WriteLine(MediaPlayback.GetCurrentSong());
                 }
 
                 if (Environment.CommandLine.Contains("--zhro"))
@@ -52,15 +42,15 @@ namespace Zuxi.OSC
                 }
                 else
                 {
-                    HeartRateMod.Initialize();
+                    HeartBeat.CreateHeartRate();
                 }
 
                 Callbacks.OnNewRequest("Hello World! OSC Ready...");
 
                 ChatBox.StartTimingMe(ChatBox.UpdateChatboxFunc);
 
-                FriendsMain.Initialize(Callbacks.OnNewRequest);
-               
+                FriendsMain.Initialize();
+
                 while (true) { }
             }
             catch (Exception ex)
@@ -77,7 +67,6 @@ namespace Zuxi.OSC
                 }
 
                 Console.ReadLine();
-
             }
         }
 

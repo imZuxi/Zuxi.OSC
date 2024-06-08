@@ -1,10 +1,8 @@
 ﻿using BuildSoft.VRChat.Osc.Chatbox;
-using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Timers;
-using Zuxi.OSC.Media;
+using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
+using Zuxi.OSC.utility;
 using Zuxi.OSC.Utils;
 
 namespace Zuxi.OSC
@@ -18,17 +16,16 @@ namespace Zuxi.OSC
         {
             if (string.IsNullOrEmpty(ChatboxText) && !bypass)
             {
-                File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), "");
-                // Bail Early no update LMAO saves VRChat Chatbox
+
+                // Bail Early no update saves VRChat Chatbox from thowing a spam error
                 return;
             }
-            File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxText);
 
             Console.WriteLine(ChatboxText);
             OscChatbox.SendMessage(ChatboxText, direct: true);
         }
 
-
+        // NOTE TO SELF THIS WILL CAUSE A RACE CONTIDION PLEASE FIX
         public static void UpdateChatboxFunc()
         {
             UpdateChatbox = true;
@@ -36,9 +33,8 @@ namespace Zuxi.OSC
             {
                 SendToChatBox(SendThisValue[0]);
                 File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), SendThisValue[0]);
-              //  Zuxi.OSC.WebModule.WebSocket.SendMessage(SendThisValue[0]);
                 SendThisValue.RemoveAt(0);
-               
+
                 return;
             }
 
@@ -46,30 +42,30 @@ namespace Zuxi.OSC
 
             if (Program.NormalChatbox)
             {
-              ChatboxText += "imzuxi.com\v";
+                ChatboxText += "imzuxi.com\v";
             }
 
             if (Program.HeartRate)
             {
-                if (HeartRateMod.HeartRateInt != 0)
-                    ChatboxText += $"{HeartRateMod.HeartRateInt.ToString()}❤️\v";
+                if (HeartBeat.lasthr != 0)
+                    ChatboxText += $"{HeartBeat.lasthr}❤️\v";
             }
             else
             {
                 if (!Program.NormalChatbox)
                 {
-                   ChatboxText += "imzuxi.com";
+                    ChatboxText += "imzuxi.com";
                 }
             }
 
             if (Program.NormalChatbox)
             {
-                string CurrentSong = MediaPlayback.GetSongInfo();
+                string CurrentSong = MediaPlayback.GetCurrentSong();
                 if (!string.IsNullOrEmpty(CurrentSong))
                 {
                     ChatboxText += $"[ Current Song ] \v {CurrentSong}";
                 }
-               
+
                 if (GeneralUtils.IsVR())
                 {
                     var ProgramWindow = Current_Active_Window.Get();
@@ -89,11 +85,11 @@ namespace Zuxi.OSC
                     {
                         ChatboxText += "\v";
                     }
-                   // ChatboxText += "[ System Info ]\v ";
-                 //   float cpuUsage = SysInfo.GetCpuUsage();
-                   // SysInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
-                   // ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
-                  
+                    // ChatboxText += "[ System Info ]\v ";
+                    //   float cpuUsage = SysInfo.GetCpuUsage();
+                    // SysInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
+                    // ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
+
                     // Get Memory Usage 
                     Console.WriteLine($"Memory Usage: ");
 
@@ -105,7 +101,7 @@ namespace Zuxi.OSC
 
                 }
 
-              
+
             }
 
             string FileText = System.IO.File.ReadAllText(System.IO.Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
@@ -121,21 +117,26 @@ namespace Zuxi.OSC
             GC.Collect();
         }
 
+        public static void AddNewMessageToChatboxQue(string data)
+        {
+            ChatBox.SendThisValue.Add(data);
+        }
+
         #region Timer Loop to Update Chatbox
         static Action OnTimerFinished = delegate { };
-        static Timer timer = null;
+        static System.Timers.Timer timer = null;
         internal static void StartTimingMe(Action OnThisTimerFinished)
         {
             if (timer is not null)
                 return;
 
-            timer = new Timer();
+            timer = new System.Timers.Timer();
 
             OnTimerFinished = OnThisTimerFinished;
 
             timer.Interval = 7000; // 1 second
 
-            timer.Elapsed += (s,e) => OnTimerFinished.Invoke();
+            timer.Elapsed += (s, e) => OnTimerFinished.Invoke();
 
             timer.Start();
         }

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-
-using System.Management;
-using Microsoft.VisualBasic.Devices;
-namespace Zuxi.OSC
+﻿namespace Zuxi.OSC
 {
     internal class SysInfo
     {
+        // TODO: Fix this it broke with the .net 8 upgrade
+        /*
        internal static float GetCpuUsage()
         {
             using (PerformanceCounter cpuCounter = new PerformanceCounter("Processor", "% Processor Time", "_Total"))
@@ -24,5 +21,6 @@ namespace Zuxi.OSC
             usedMemory = totalMemory - freeMemory;
             memoryUsage = (float)usedMemory / totalMemory * 100;
         }
+        */
     }
 }

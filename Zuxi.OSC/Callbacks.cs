@@ -11,14 +11,9 @@ namespace Zuxi.OSC
         public static void OnNewRequest(string Data)
         {
             ChatBox.SendThisValue.Add("imzuxi.com\v" + Data);
-
             ChatBox.UpdateChatbox = false;
-
         }
 
-
-
-
-
+      
     }
 }
