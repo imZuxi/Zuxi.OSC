@@ -18,7 +18,7 @@ namespace Zuxi.OSC.Modules
             return Task.Run(async () =>
             {
                 // GOD THIS IS SO UNOPTIMIZXED HOLY but cannot be asked to fix
-                // btw this took 3 hours to figure out since this project used net 8 now 6 lmao 
+                // btw this took 3 hours to figure out since this project needed to be upgraded to .net core so i used net 8 org now 6 lmao 
 
                 var gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
                 var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
