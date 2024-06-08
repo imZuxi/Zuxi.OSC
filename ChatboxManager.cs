@@ -3,11 +3,10 @@ using System.Timers;
 using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
 using Zuxi.OSC.utility;
-using Zuxi.OSC.Utils;
 
 namespace Zuxi.OSC
 {
-    internal class ChatBox
+    internal class ChatboxManager
     {
         public static bool UpdateChatbox = true;
         public static List<string> SendThisValue = new List<string>();
@@ -66,8 +65,7 @@ namespace Zuxi.OSC
                     ChatboxText += $"[ Current Song ] \v {CurrentSong}";
                 }
 
-                if (GeneralUtils.IsVR())
-                {
+              
                     var ProgramWindow = Current_Active_Window.Get();
                     if (!string.IsNullOrEmpty(ProgramWindow) && !CurrentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
                     {
@@ -92,16 +90,6 @@ namespace Zuxi.OSC
 
                     // Get Memory Usage 
                     Console.WriteLine($"Memory Usage: ");
-
-
-
-
-
-
-
-                }
-
-
             }
 
             string FileText = System.IO.File.ReadAllText(System.IO.Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
@@ -119,7 +107,7 @@ namespace Zuxi.OSC
 
         public static void AddNewMessageToChatboxQue(string data)
         {
-            ChatBox.SendThisValue.Add(data);
+            ChatboxManager.SendThisValue.Add(data);
         }
 
         #region Timer Loop to Update Chatbox

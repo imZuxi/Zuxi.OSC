@@ -30,7 +30,7 @@ namespace Zuxi.OSC.Modules.FriendRequests
 
             Console.WriteLine("Current Friends: {0}", VRCU.Friends.Count);
 
-            ChatBox.AddNewMessageToChatboxQue(string.Format("Current Friends: {0}", VRCU.Friends.Count));
+            ChatboxManager.AddNewMessageToChatboxQue(string.Format("Current Friends: {0}", VRCU.Friends.Count));
 
             FriendRequestHandler.FetchVRChatRequestsAndAcceptAll();
 

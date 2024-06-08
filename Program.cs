@@ -45,9 +45,9 @@ namespace Zuxi.OSC
                     HeartBeat.CreateHeartRate();
                 }
 
-                Callbacks.OnNewRequest("Hello World! OSC Ready...");
+                ChatboxManager.AddNewMessageToChatboxQue("Hello World! OSC Ready...");
 
-                ChatBox.StartTimingMe(ChatBox.UpdateChatboxFunc);
+                ChatboxManager.StartTimingMe(ChatboxManager.UpdateChatboxFunc);
 
                 FriendsMain.Initialize();
 
@@ -57,13 +57,13 @@ namespace Zuxi.OSC
             {
                 Console.WriteLine($"Error: {ex}");
 
-                ChatBox.UpdateChatboxFunc();
+                ChatboxManager.UpdateChatboxFunc();
 
-                Callbacks.OnNewRequest("⚠️ Error in Chatbox Alert Zuxi! ⚠️");
+               ChatboxManager.AddNewMessageToChatboxQue("⚠️ Error in Chatbox Alert Zuxi! ⚠️");
 
-                while (ChatBox.SendThisValue.Count < 100)
+                while (ChatboxManager.SendThisValue.Count < 100)
                 {
-                    ChatBox.SendThisValue.Add("⚠️ Error in Chatbox Alert Zuxi! ⚠️");
+                    ChatboxManager.AddNewMessageToChatboxQue("⚠️ Error in Chatbox Alert Zuxi! ⚠️");
                 }
 
                 Console.ReadLine();
@@ -74,7 +74,7 @@ namespace Zuxi.OSC
         {
             Console.WriteLine("Application closing...");
 
-            ChatBox.SendToChatBox("", true);
+            ChatboxManager.SendToChatBox("", true);
             // give chatbox time to close down
             Thread.Sleep(1000);
             // Perform any necessary cleanup or additional logic here

@@ -1,8 +1,8 @@
-﻿namespace Zuxi.OSC
+﻿namespace Zuxi.OSC.Modules
 {
-    internal class SysInfo
+    internal class SystemInfo
     {
-        // TODO: Fix this it broke with the .net 8 upgrade
+        // TODO: Fix this it broke with the .net 6 upgrade
         /*
        internal static float GetCpuUsage()
         {
@@ -20,7 +20,8 @@
             ulong freeMemory = (ulong)new ComputerInfo().AvailablePhysicalMemory;
             usedMemory = totalMemory - freeMemory;
             memoryUsage = (float)usedMemory / totalMemory * 100;
-        }
+        } 
         */
     }
+
 }

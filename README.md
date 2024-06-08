@@ -1,7 +1,7 @@
 # Zuxi.OSC
 
 - **Automatic Friend Request Management**: Automatically accepts incoming friend requests and displays notifications in your chatbox.
-- **Spotify Integration**: Seamlessly pulls and displays data from a locally running Spotify instance.
+- **Media Integration**: Seamlessly pulls and displays data from a locally playing media.
 - **Heart Rate Monitoring**: Includes support for monitoring and displaying your heart rate.
 - **Active Window Detection**: Tracks and shows your currently active window.
 

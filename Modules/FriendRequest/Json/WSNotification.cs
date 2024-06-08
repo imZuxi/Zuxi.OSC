@@ -16,8 +16,10 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json
             return JsonConvert.DeserializeObject<WSNotification>(json);
         }
     }
-    [Obsolete("Cant Remeber why i wrote this")]
-    public class Content
+    [Obsolete("Not used due to rewriting. However, it's still here since some other VRChat WebSocket data is sent can be used for this at which point I will remove the obsolete tag.")]
+    public class WebsocketContainer
+    {
+        public class Content
     {
         [JsonProperty("id")]
         public string Id { get; set; }

@@ -49,8 +49,8 @@ namespace Zuxi.OSC.Modules.FriendRequests
                 Console.Title = string.Format("Current User {0} | Friend Count {1}", VRCUser.CurrentUser.DisplayName, VRCUser.CurrentUser.Friends.Count);
 
                 // TODO: fix this to acutally interupt the main function
-                ChatBox.SendThisValue.Add(string.Format("Hello {0}\v Thanks for Becoming my Friend!\v I now have {1} Friends!", WF.user.displayName, VRCUser.CurrentUser.Friends.Count));
-                ChatBox.UpdateChatbox = false;
+                ChatboxManager.SendThisValue.Add(string.Format("Hello {0}\v Thanks for Becoming my Friend!\v I now have {1} Friends!", WF.user.displayName, VRCUser.CurrentUser.Friends.Count));
+                ChatboxManager.UpdateChatbox = false;
                 ZuxiBioUpdate.SendUpdate();
             }
         }

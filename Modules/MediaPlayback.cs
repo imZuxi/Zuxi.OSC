@@ -34,25 +34,5 @@ namespace Zuxi.OSC.Modules
 
         private static async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session) =>
             await session.TryGetMediaPropertiesAsync();
-
-        // this is legacy for a reason mainly spotify being increasing price thus its not my main music player anymore shame i had cool stuff
-        [Obsolete("legacy doesnt pull from windows media framework")]
-        public static string GetSongFromSpotifyInfo()
-        {
-            string processName = "spotify";
-
-            Process[] SpotifyProcesses = Process.GetProcessesByName(processName);
-            foreach (Process process in SpotifyProcesses)
-            {
-                if (!string.IsNullOrEmpty(process.MainWindowTitle))
-                {
-                    if (process.MainWindowTitle.Contains("Spotify"))
-                        return "";
-                    else
-                        return process.MainWindowTitle;
-                }
-            }
-            return "";
-        }
     }
 }
