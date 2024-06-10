@@ -1,5 +1,4 @@
 ﻿using BuildSoft.VRChat.Osc.Chatbox;
-using System.Timers;
 using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
 using Zuxi.OSC.utility;
@@ -10,7 +9,6 @@ namespace Zuxi.OSC
     {
         public static bool UpdateChatbox = true;
         public static List<string> SendThisValue = new List<string>();
-
         public static void SendToChatBox(string ChatboxText, bool bypass = false)
         {
             if (string.IsNullOrEmpty(ChatboxText) && !bypass)
@@ -31,6 +29,7 @@ namespace Zuxi.OSC
             if (SendThisValue.Count > 0)
             {
                 SendToChatBox(SendThisValue[0]);
+                // OBSHook64.dll (Real)
                 File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), SendThisValue[0]);
                 SendThisValue.RemoveAt(0);
 
@@ -41,7 +40,8 @@ namespace Zuxi.OSC
 
             if (Program.NormalChatbox)
             {
-                ChatboxText += "imzuxi.com\v";
+                // Disabled lol let me not flex my site my bio does that enough
+                // ChatboxText += "imzuxi.com\v";
             }
 
             if (Program.HeartRate)
@@ -65,7 +65,8 @@ namespace Zuxi.OSC
                     ChatboxText += $"[ Current Song ] \v {CurrentSong}";
                 }
 
-              
+                if (!IsInVR)
+                {
                     var ProgramWindow = Current_Active_Window.Get();
                     if (!string.IsNullOrEmpty(ProgramWindow) && !CurrentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
                     {
@@ -73,23 +74,29 @@ namespace Zuxi.OSC
                         {
                             ChatboxText += "\v";
                         }
-                        ChatboxText += $"[ Current Window ]: {ProgramWindow}";
+                        ChatboxText += $"[ Current Window ]: \v {ProgramWindow}";
                     }
+                }
+                #region Broken Will Fix
+                //TODO: dont fix jk please fix should be in above if loop
+                /*  
 
-                    // SYSINFO
+                   // SYSINFO
 
 
-                    if (!string.IsNullOrEmpty(ProgramWindow))
-                    {
-                        ChatboxText += "\v";
-                    }
-                    // ChatboxText += "[ System Info ]\v ";
-                    //   float cpuUsage = SysInfo.GetCpuUsage();
-                    // SysInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
-                    // ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
+                   if (!string.IsNullOrEmpty(ProgramWindow))
+                   {
+                       ChatboxText += "\v";
+                   }
+                 */
+                // ChatboxText += "[ System Info ]\v ";
+                //   float cpuUsage = SysInfo.GetCpuUsage();
+                // SysInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
+                // ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
 
-                    // Get Memory Usage 
-                    Console.WriteLine($"Memory Usage: ");
+                // Get Memory Usage 
+                //Console.WriteLine($"Memory Usage: ");
+                #endregion
             }
 
             string FileText = System.IO.File.ReadAllText(System.IO.Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
@@ -108,23 +115,23 @@ namespace Zuxi.OSC
         public static void AddNewMessageToChatboxQue(string data)
         {
             ChatboxManager.SendThisValue.Add(data);
+            ChatboxManager.UpdateChatbox = false;
         }
 
         #region Timer Loop to Update Chatbox
-        static Action OnTimerFinished = delegate { };
-        static System.Timers.Timer timer = null;
-        internal static void StartTimingMe(Action OnThisTimerFinished)
+        static System.Timers.Timer timer;
+        internal static bool IsInVR;
+
+        internal static void Start()
         {
             if (timer is not null)
                 return;
 
             timer = new System.Timers.Timer();
 
-            OnTimerFinished = OnThisTimerFinished;
+            timer.Interval = 7000; // 7 seconds seems to be a safe value to update at
 
-            timer.Interval = 7000; // 1 second
-
-            timer.Elapsed += (s, e) => OnTimerFinished.Invoke();
+            timer.Elapsed += (s, e) => UpdateChatboxFunc();
 
             timer.Start();
         }

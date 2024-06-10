@@ -1,4 +1,5 @@
 ﻿using BuildSoft.VRChat.Osc;
+using System.Diagnostics;
 using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
 using Zuxi.OSC.Modules.FriendRequests;
@@ -14,10 +15,9 @@ namespace Zuxi.OSC
         {
             try
             {
-
+            
                 Console.WriteLine(Current_Active_Window.Get());
                 Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress);
-                // Utils.GeneralUtils.IsVR();
                 Console.WriteLine(MediaPlayback.GetCurrentSong());
                 Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
 
@@ -31,13 +31,13 @@ namespace Zuxi.OSC
 
                 if (Environment.CommandLine.ToLower().Contains("--zreqo"))
                 {
+                    Console.WriteLine("Normal Cheatbox Disabled...");
                     NormalChatbox = false;
-
-                    Console.WriteLine(MediaPlayback.GetCurrentSong());
                 }
 
-                if (Environment.CommandLine.Contains("--zhro"))
+                if (Environment.CommandLine.ToLower().Contains("--zhro"))
                 {
+                    Console.WriteLine("Heartrate Disabled...");
                     HeartRate = false;
                 }
                 else
@@ -45,9 +45,11 @@ namespace Zuxi.OSC
                     HeartBeat.CreateHeartRate();
                 }
 
+                ChatboxManager.IsInVR = GeneralUtils.IsInVR();
+
                 ChatboxManager.AddNewMessageToChatboxQue("Hello World! OSC Ready...");
 
-                ChatboxManager.StartTimingMe(ChatboxManager.UpdateChatboxFunc);
+                ChatboxManager.Start();
 
                 FriendsMain.Initialize();
 

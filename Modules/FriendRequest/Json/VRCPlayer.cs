@@ -8,9 +8,6 @@ using System.Threading.Tasks;
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json
 {
-
-
-
     public class VRCPlayer
     {
         public static VRCPlayer CreateVRCPlayer(string value)

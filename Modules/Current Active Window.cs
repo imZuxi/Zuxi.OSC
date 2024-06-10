@@ -57,7 +57,7 @@ namespace Zuxi.OSC.Modules
             output = input.Split(replace).Last().Trim();
         }
 
-        private static void GetFirstIndex(string input, char replace, out string output)
+        public static void GetFirstIndex(string input, char replace, out string output)
         {
             output = input.Split(replace).First().Trim();
         }

@@ -33,12 +33,12 @@ namespace Zuxi.OSC.Modules
 
                 var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
 
-                
 
-              //  if (mediaProperties.)
+
+                //  if (mediaProperties.)
                 // Apple Music is kinda stupid ngl this is to fix it i know its stupid idc
-                return string.IsNullOrEmpty(mediaProperties.Artist) ? mediaProperties.AlbumArtist.Split('-')[0] : 
-                string.Format("{0} - {1}", mediaProperties.Title, mediaProperties.Artist);
+                string artist = string.IsNullOrEmpty(mediaProperties.Artist) ? GetStringBeforeFirstDash(mediaProperties.AlbumArtist) : mediaProperties.Artist;
+                 return string.Format("{0} - {1}", mediaProperties.Title, artist);
 
             }).Result;
         }
@@ -48,5 +48,15 @@ namespace Zuxi.OSC.Modules
 
         private static async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session) =>
             await session.TryGetMediaPropertiesAsync();
+
+        static string GetStringBeforeFirstDash(string input)
+        {
+            int dashIndex = input.IndexOf('—');
+            if (dashIndex >= 0)
+            {
+                return input.Substring(0, dashIndex);
+            }
+            return input;  // If no dash is found, return the whole input string
+        }
     }
 }

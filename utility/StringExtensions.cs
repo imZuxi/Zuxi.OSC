@@ -17,5 +17,10 @@ namespace Zuxi.OSC.utility
             // Replace non-UTF-8 characters with an empty string
             return Regex.Replace(input, pattern, "");
         }
+
+        public static bool IsgNullOrEmpty(this string input)
+        {
+            return string.IsNullOrEmpty(input);
+        }
     }
 }
