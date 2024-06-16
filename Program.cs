@@ -17,21 +17,16 @@ namespace Zuxi.OSC
             {
             
                 Console.WriteLine(Current_Active_Window.Get());
-                Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress);
+                Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress!);
                 Console.WriteLine(MediaPlayback.GetCurrentSong());
                 Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
-
                 Config.LoadData();
-
                 Console.ForegroundColor = ConsoleColor.Cyan;
-
-                string LastWindow = Environment.NewLine;
-
                 OscConnectionSettings.SendPort = 9000;
 
                 if (Environment.CommandLine.ToLower().Contains("--zreqo"))
                 {
-                    Console.WriteLine("Normal Cheatbox Disabled...");
+                    Console.WriteLine("Normal chat box Disabled...");
                     NormalChatbox = false;
                 }
 
@@ -46,26 +41,21 @@ namespace Zuxi.OSC
                 }
 
                 ChatboxManager.IsInVR = GeneralUtils.IsInVR();
-
                 ChatboxManager.AddNewMessageToChatboxQue("Hello World! OSC Ready...");
-
                 ChatboxManager.Start();
-
                 FriendsMain.Initialize();
-
                 while (true) { }
             }
             catch (Exception ex)
-            {
+            { 
                 Console.WriteLine($"Error: {ex}");
-
                 ChatboxManager.UpdateChatboxFunc();
 
-               ChatboxManager.AddNewMessageToChatboxQue("⚠️ Error in Chatbox Alert Zuxi! ⚠️");
+                ChatboxManager.AddNewMessageToChatboxQue("⚠️ Error in chat box Alert Zuxi! ⚠️");
 
-                while (ChatboxManager.SendThisValue.Count < 100)
+                while (ChatboxManager.ChatboxQue.Count < 100)
                 {
-                    ChatboxManager.AddNewMessageToChatboxQue("⚠️ Error in Chatbox Alert Zuxi! ⚠️");
+                    ChatboxManager.AddNewMessageToChatboxQue("⚠️ Error in Chat box Alert Zuxi! ⚠️");
                 }
 
                 Console.ReadLine();

@@ -10,7 +10,7 @@ namespace Zuxi.OSC.Modules.FriendRequests
 
     internal class Messages
     {
-        public static JFriendRequest DesteralizeMessageAsFriendRequest(string jsonString)
+        public static friendRequest DesteralizeMessageAsFriendRequest(string jsonString)
         {
             NotificationMessage notificationMessage = JsonConvert.DeserializeObject<NotificationMessage>(jsonString);
             if (notificationMessage.Type == "notification")
@@ -30,12 +30,12 @@ namespace Zuxi.OSC.Modules.FriendRequests
             public string ContentJson { get; set; }
 
             [JsonIgnore]
-            public JFriendRequest Content { get; set; }
+            public friendRequest Content { get; set; }
             public void DeserializeContent()
             {
                 if (Type == "notification")
                 {
-                    Content = JFriendRequest.DecodeJson("["+ ContentJson + "]")[0];
+                    Content = friendRequest.DecodeJson("["+ ContentJson + "]")[0];
                 }
                 else
                 {

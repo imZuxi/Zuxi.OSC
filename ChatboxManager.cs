@@ -7,31 +7,29 @@ namespace Zuxi.OSC
 {
     internal class ChatboxManager
     {
-        public static bool UpdateChatbox = true;
-        public static List<string> SendThisValue = new List<string>();
-        public static void SendToChatBox(string ChatboxText, bool bypass = false)
+        public static readonly List<string> ChatboxQue = new();
+        public static void SendToChatBox(string chatboxText, bool bypass = false)
         {
-            if (string.IsNullOrEmpty(ChatboxText) && !bypass)
+            if (string.IsNullOrEmpty(chatboxText) && !bypass)
             {
-
-                // Bail Early no update saves VRChat Chatbox from thowing a spam error
+                // Bail Early no update saves VRChat Chat box from throwing a spam error
                 return;
             }
 
-            Console.WriteLine(ChatboxText);
-            OscChatbox.SendMessage(ChatboxText, direct: true);
+            Console.WriteLine(chatboxText);
+            OscChatbox.SendMessage(chatboxText, direct: true);
         }
 
-        // NOTE TO SELF THIS WILL CAUSE A RACE CONTIDION PLEASE FIX
+      
         public static void UpdateChatboxFunc()
         {
-            UpdateChatbox = true;
-            if (SendThisValue.Count > 0)
+            // NOTE TO SELF THIS WILL CAUSE A RACE CONTIDION PLEASE FIX (when something calles add new messages to chatboxque while its proccesing)
+            if (ChatboxQue.Count > 0)
             {
-                SendToChatBox(SendThisValue[0]);
+                SendToChatBox(ChatboxQue[0]);
                 // OBSHook64.dll (Real)
-                File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), SendThisValue[0]);
-                SendThisValue.RemoveAt(0);
+              //  File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
+                ChatboxQue.RemoveAt(0);
 
                 return;
             }
@@ -59,18 +57,18 @@ namespace Zuxi.OSC
 
             if (Program.NormalChatbox)
             {
-                string CurrentSong = MediaPlayback.GetCurrentSong();
-                if (!string.IsNullOrEmpty(CurrentSong))
+                string currentSong = MediaPlayback.GetCurrentSong();
+                if (!string.IsNullOrEmpty(currentSong))
                 {
-                    ChatboxText += $"[ Current Song ] \v {CurrentSong}";
+                    ChatboxText += $"[ Current Song ] \v {currentSong}";
                 }
 
                 if (!IsInVR)
                 {
                     var ProgramWindow = Current_Active_Window.Get();
-                    if (!string.IsNullOrEmpty(ProgramWindow) && !CurrentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
+                    if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
                     {
-                        if (!string.IsNullOrEmpty(CurrentSong))
+                        if (!string.IsNullOrEmpty(currentSong))
                         {
                             ChatboxText += "\v";
                         }
@@ -109,13 +107,11 @@ namespace Zuxi.OSC
 
             #endregion
             SendToChatBox(ChatboxText);
-            GC.Collect();
         }
 
         public static void AddNewMessageToChatboxQue(string data)
         {
-            ChatboxManager.SendThisValue.Add(data);
-            ChatboxManager.UpdateChatbox = false;
+            ChatboxQue.Add(data);
         }
 
         #region Timer Loop to Update Chatbox

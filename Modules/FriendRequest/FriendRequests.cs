@@ -16,9 +16,9 @@ namespace Zuxi.OSC.Modules.FriendRequests
             Console.WriteLine("Fetching Friend Requests");
 
             string Notis = FriendsMain.HClient.GetUserNotis();
-            List<JFriendRequest> friendRequests = JFriendRequest.DecodeJson(Notis);
+            List<friendRequest> friendRequests = friendRequest.DecodeJson(Notis);
 
-            foreach (JFriendRequest friendRequest in friendRequests)
+            foreach (friendRequest friendRequest in friendRequests)
                 AcceptRequest(friendRequest);
             ZuxiBioUpdate.SendUpdate();
         }
@@ -31,7 +31,7 @@ namespace Zuxi.OSC.Modules.FriendRequests
 
                 if (Noti.Content.Contains("friendRequest"))
                 {
-                    JFriendRequest a = JFriendRequest.DecodeJson("[" + Noti.Content + "]")[0];
+                    friendRequest a = friendRequest.DecodeJson("[" + Noti.Content + "]")[0];
                     AcceptRequest(a);
                 }
             }
@@ -54,7 +54,7 @@ namespace Zuxi.OSC.Modules.FriendRequests
         }
 
 
-        internal static void AcceptRequest(JFriendRequest item)
+        internal static void AcceptRequest(friendRequest item)
         {
 
             if (Config.IgnoredFriendRequests.Contains(item.SenderUserId))

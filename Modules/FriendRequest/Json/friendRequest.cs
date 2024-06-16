@@ -2,7 +2,7 @@
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json
 {
-    internal class JFriendRequest
+    internal class friendRequest
     {
         public string Id { get; set; }
         public string SenderUserId { get; set; }
@@ -13,10 +13,10 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json
         public bool Seen { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public static List<JFriendRequest> DecodeJson(string json)
+        public static List<friendRequest> DecodeJson(string json)
         {
             // Deserialize the JSON string into a List<FriendRequest> object
-            return JsonConvert.DeserializeObject<List<JFriendRequest>>(json);
+            return JsonConvert.DeserializeObject<List<friendRequest>>(json);
 
         }
     }
