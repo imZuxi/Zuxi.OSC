@@ -16,7 +16,7 @@ namespace Zuxi.OSC
             try
             {
             
-                Console.WriteLine(Current_Active_Window.Get());
+                Console.WriteLine(ActiveWindow.Get());
                 Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress!);
                 Console.WriteLine(MediaPlayback.GetCurrentSong());
                 Directory.SetCurrentDirectory(FileUtils.GetAppFolder());

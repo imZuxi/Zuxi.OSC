@@ -65,7 +65,7 @@ namespace Zuxi.OSC
 
                 if (!IsInVR)
                 {
-                    var ProgramWindow = Current_Active_Window.Get();
+                    var ProgramWindow = ActiveWindow.Get();
                     if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
                     {
                         if (!string.IsNullOrEmpty(currentSong))

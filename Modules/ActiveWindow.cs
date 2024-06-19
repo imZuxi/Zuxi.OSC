@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Zuxi.OSC.Modules
 {
-    internal class Current_Active_Window
+    internal class ActiveWindow
     {
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();

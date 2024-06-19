@@ -20,14 +20,13 @@ namespace Zuxi.OSC.Modules
                         return "";
                     }
                     var playbackInfo = currentsession.GetPlaybackInfo();
-
                     Console.WriteLine(playbackInfo.PlaybackStatus.ToString());
                     if (playbackInfo.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Paused)
                     {
                         return "";
                     }
-
                     var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
+                    
                     // Apple Music is kinda stupid ngl this is to fix it i know its stupid idc
                     string artist = string.IsNullOrEmpty(mediaProperties.Artist) ? GetStringBeforeFirstDash(mediaProperties.AlbumArtist) : mediaProperties.Artist;
                     return string.Format("{0} - {1}", mediaProperties.Title, artist);
