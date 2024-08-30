@@ -10,6 +10,7 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json
 {
     public class VRCPlayer
     {
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public static VRCPlayer CreateVRCPlayer(string value)
         {
             VRCPlayer _VRCPlayer = JsonConvert.DeserializeObject<VRCPlayer>(value);

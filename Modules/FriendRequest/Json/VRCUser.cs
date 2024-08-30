@@ -4,7 +4,7 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json
 {
     public class VRCUser
     {
-
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
         public static VRCUser CurrentUser;
         public static VRCUser CreateVRCUser(string value)
         {
@@ -21,7 +21,9 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json
         public List<string> ActiveFriends { get; set; }
         public bool AllowAvatarCopying { get; set; }
         public string Bio { get; set; }
+
         public List<string> BioLinks { get; set; }
+
         public string CurrentAvatar { get; set; }
         public string CurrentAvatarAssetUrl { get; set; }
         public string CurrentAvatarImageUrl { get; set; }
