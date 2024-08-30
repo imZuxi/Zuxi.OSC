@@ -29,7 +29,7 @@ namespace Zuxi.OSC.Modules
                     
                     // Apple Music is kinda stupid ngl this is to fix it i know its stupid idc
                     string artist = string.IsNullOrEmpty(mediaProperties.Artist) ? GetStringBeforeFirstDash(mediaProperties.AlbumArtist) : mediaProperties.Artist;
-                    return string.Format("{0} - {1}", mediaProperties.Title, artist);
+                    return string.Format("{1} - {0}", mediaProperties.Title, artist);
                 }
                 catch (Exception e)
                 {

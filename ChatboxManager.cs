@@ -1,4 +1,5 @@
 ﻿using BuildSoft.VRChat.Osc.Chatbox;
+using WebSocketSharp;
 using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
 using Zuxi.OSC.utility;
@@ -66,6 +67,7 @@ namespace Zuxi.OSC
                 if (!IsInVR)
                 {
                     var ProgramWindow = ActiveWindow.Get();
+                    
                     if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
                     {
                         if (!string.IsNullOrEmpty(currentSong))
