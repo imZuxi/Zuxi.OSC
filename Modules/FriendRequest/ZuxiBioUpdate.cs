@@ -26,7 +26,7 @@ namespace Zuxi.OSC.Module.FriendRequests
 
             Update.bio = Config.Bio.Replace("{CURRENTFRIENDCOUNT}", VRCUser.CurrentUser.Friends.Count.ToString());
             string json = Newtonsoft.Json.JsonConvert.SerializeObject(Update);
-            string re = FriendsMain.HClient.MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
+            string re = HClient.GetInstance().MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
             if (re != "[]")
             {
                 VRCUser.CreateVRCUser(re);

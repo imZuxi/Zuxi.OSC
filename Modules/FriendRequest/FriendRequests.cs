@@ -11,88 +11,98 @@ namespace Zuxi.OSC.Modules.FriendRequests
 {
     internal class FriendRequestHandler
     {
-        public static void FetchVRChatRequestsAndAcceptAll()
+        public static void FetchVrChatRequestsAndAcceptAll()
         {
             Console.WriteLine("Fetching Friend Requests");
 
-            string Notis = FriendsMain.HClient.GetUserNotis();
-            List<friendRequest> friendRequests = friendRequest.DecodeJson(Notis);
+            string userNotifs = HClient.GetInstance().GetUserNotis();
+            List<friendRequest> friendRequests = friendRequest.DecodeJson(userNotifs);
 
             foreach (friendRequest friendRequest in friendRequests)
                 AcceptRequest(friendRequest);
             ZuxiBioUpdate.SendUpdate();
         }
 
-        public static void OnWebsocketRequest(string Data)
+        public static void OnWebsocketRequest(string data)
         {
-            WSNotification Noti = WSNotification.FromJson(Data);
-            if (Noti.Type == "notification")
+            WSNotification wsNotification = WSNotification.FromJson(data);
+            if (wsNotification.Type == "notification")
             {
 
-                if (Noti.Content.Contains("friendRequest"))
+                if (wsNotification.Content.Contains("friendRequest"))
                 {
-                    friendRequest a = friendRequest.DecodeJson("[" + Noti.Content + "]")[0];
+                    friendRequest a = friendRequest.DecodeJson("[" + wsNotification.Content + "]")[0];
                     AcceptRequest(a);
                 }
             }
 
-            if (Noti.Type == "friend-add")
+            if (wsNotification.Type == "friend-add")
             {
-               WebsocketFriend WF = WebsocketFriend.Create(Noti.Content);
-                if (VRCUser.CurrentUser.Friends.Contains(WF.id))
+               WebsocketFriend websocketFriend = WebsocketFriend.Create(wsNotification.Content);
+                if (VRCUser.CurrentUser.Friends.Contains(websocketFriend.id))
                     return;
 
-                Console.WriteLine("Display Name: " + WF.user.displayName);
-                VRCUser.CurrentUser.Friends.Add(WF.id);
-                Console.WriteLine(WF.id);
+                Console.WriteLine("Display Name: " + websocketFriend.user.displayName);
+                VRCUser.CurrentUser.Friends.Add(websocketFriend.id);
+                Console.WriteLine(websocketFriend.id);
 
-                Console.Title = string.Format("Current User {0} | Friend Count {1}", VRCUser.CurrentUser.DisplayName, VRCUser.CurrentUser.Friends.Count);
+                Console.Title =
+                    $"Current User {VRCUser.CurrentUser.DisplayName} | Friend Count {VRCUser.CurrentUser.Friends.Count}";
 
-                 ChatboxManager.AddNewMessageToChatboxQue(string.Format("Hello {0}\v Thanks for Becoming my Friend!\v I now have {1} Friends!", WF.user.displayName, VRCUser.CurrentUser.Friends.Count));
+                 ChatboxManager.AddNewMessageToChatboxQue(
+                     $"Hello {websocketFriend.user.displayName}\v Thanks for Becoming my Friend!\v I now have {VRCUser.CurrentUser.Friends.Count} Friends!");
                 ZuxiBioUpdate.SendUpdate();
+            }
+
+            if (wsNotification.Type == "friend-delete")
+            {
+                WebsocketFriend wf = WebsocketFriend.Create(wsNotification.Content);
+                if (!VRCUser.CurrentUser.Friends.Contains(wf.id))
+                    return;
+                VRCPlayer vrcUser =  HClient.GetInstance().GetVRCUserByID(wf.id);
+                Console.WriteLine($"{vrcUser.DisplayName} Removed you as a friend!");
+               
             }
         }
 
 
-        internal static void AcceptRequest(friendRequest item)
+        private static void AcceptRequest(friendRequest item)
         {
 
             if (Config.IgnoredFriendRequests.Contains(item.SenderUserId))
             {
-                Console.WriteLine("ignoreing Friend Request From " + item.SenderUserId);
+                Console.WriteLine("ignoring Friend Request From " + item.SenderUserId);
                 return;
             }
 
-            string CurrentUser = FriendsMain.HClient.GetVRCUserByID(item.SenderUserId);
-            VRCPlayer ThisUser = VRCPlayer.CreateVRCPlayer(CurrentUser);
+            VRCPlayer vrcUser  = HClient.GetInstance().GetVRCUserByID(item.SenderUserId);
 
-            if (VRCUser.CurrentUser.Friends.Contains(ThisUser.Id))
+
+            if (VRCUser.CurrentUser.Friends.Contains(vrcUser.Id))
                 return;
 
             // Check if the account is more than 30 days old
-            TimeSpan accountAge = DateTime.UtcNow - ThisUser.DateJoined;
+            TimeSpan accountAge = DateTime.UtcNow - vrcUser.DateJoined;
 
 
-            if (ThisUser.Tags.Contains("system_trust_basic") || accountAge.TotalDays > 30)
+            if (vrcUser.Tags.Contains("system_trust_basic") || accountAge.TotalDays > 30)
             {
+                if (!HClient.GetInstance().AcceptRequest(item.Id)) return;
+                VRCUser.CurrentUser.Friends.Add(item.SenderUserId);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Auto Accepted FriendRequest From {0} id {1} NotiID {2}", item.SenderUsername, item.SenderUserId, item.Id);
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Title =
+                    $"Current User {VRCUser.CurrentUser.DisplayName} | Friend Count {VRCUser.CurrentUser.Friends.Count}";
 
-                if (FriendsMain.HClient.AcceptRequest(item.Id))
-                {
-
-                    VRCUser.CurrentUser.Friends.Add(item.SenderUserId);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Auto Accepted FriendRequest From {0} id {1} NotiID {2}", item.SenderUsername, item.SenderUserId, item.Id);
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Title = string.Format("Current User {0} | Friend Count {1}", VRCUser.CurrentUser.DisplayName, VRCUser.CurrentUser.Friends.Count);
-
-                    ChatboxManager.AddNewMessageToChatboxQue(string.Format("Hello {0}\v Thanks for Becoming my Friend!\v I now have {1} Friends!", item.SenderUsername, VRCUser.CurrentUser.Friends.Count));
-                }
+                ChatboxManager.AddNewMessageToChatboxQue(
+                    $"Hello {item.SenderUsername}\v Thanks for Becoming my Friend!\v I now have {VRCUser.CurrentUser.Friends.Count} Friends!");
 
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Config.AddUserToIgnored(ThisUser.Id);
+                Config.AddUserToIgnored(vrcUser.Id);
                 Console.WriteLine("Skipping Accepting Friend Request from user {0} Because there account is still a visiter", item.SenderUsername);
 
                 Console.ForegroundColor = ConsoleColor.Cyan;

@@ -1,12 +1,13 @@
 ﻿using System.Net;
 using System.Text;
+using Zuxi.OSC.Modules.FriendRequest.Json;
 using Zuxi.OSC.utility;
 
 namespace Zuxi.OSC.Modules.FriendRequests
 {
     internal class HClient
     {
-
+        private static HClient _hClient { get; set;  }
         internal HttpClient _httpClient { get; set; }
         private const string _VRChatBaseEndpoint = "https://api.vrchat.cloud/api/1/";
         public HClient()
@@ -21,9 +22,20 @@ namespace Zuxi.OSC.Modules.FriendRequests
             httpClientHandler.CookieContainer.Add(new Cookie("auth", Config.AuthCookie) { Domain = "api.vrchat.cloud", Path = "/" });
             httpClientHandler.CookieContainer.Add(new Cookie("twoFactorAuth", Config.twoFactorAuthCookie) { Domain = "api.vrchat.cloud", Path = "/" });
             _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com");
-
+            _hClient = this;
         }
 
+        internal static HClient GetInstance()
+        {
+            if (_hClient is null)
+            {
+                _hClient = new HClient();
+            }
+
+            return _hClient;
+        }
+        
+        
         /// <summary>
         /// Checks the authentication status by sending a GET request to the VRChat API.
         /// </summary>
@@ -47,7 +59,10 @@ namespace Zuxi.OSC.Modules.FriendRequests
         /// </summary>
         /// <param name="userId">The unique identifier of the VRChat user.</param>
         /// <returns>A JSON string containing the VRChat user data retrieved from the API.</returns>
-        public string GetVRCUserByID(string userId) => MakeAPIGetRequest($"users/{userId}");
+        public VRCPlayer GetVRCUserByID(string userId)
+        {
+          return  VRCPlayer.CreateVRCPlayer( MakeAPIGetRequest($"users/{userId}"));
+        }
 
         public bool AcceptRequest(string frid)
         {
@@ -81,8 +96,8 @@ namespace Zuxi.OSC.Modules.FriendRequests
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Request to: {0} failed with status code {1} ", apiendpoint);
-                Console.WriteLine("Request failed with status code: " + response.StatusCode);
+                Console.WriteLine("Request to: {0} failed with status code {1} ", apiendpoint, response.StatusCode);
+              //  Console.WriteLine("Request failed with status code: " + response.StatusCode);
                 string content = response.Content.ReadAsStringAsync().Result;
                 Console.WriteLine("Response content: " + content);
                 Console.ForegroundColor = ConsoleColor.Cyan;

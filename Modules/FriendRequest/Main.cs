@@ -6,21 +6,21 @@ namespace Zuxi.OSC.Modules.FriendRequests
     public class FriendsMain
     {
         private static WebsocketWrapper? _websocket;
-        internal static HClient? HClient;
+   
         public static bool Initialize()
         {
             Console.WriteLine("AuthCookie: " + Config.AuthCookie);
 
             Console.WriteLine("Ignored FriendRequest Count: " + Config.IgnoredFriendRequests.Count);
 
-            HClient = new HClient();
-            if (HClient.CheckAuthStatus().Contains("Missing Credentials"))
+          
+            if (HClient.GetInstance().CheckAuthStatus().Contains("Missing Credentials"))
             {
                 throw new Exception("Failed Auth Check With VRChat Check Auth Cookie");
             }
             _websocket = new WebsocketWrapper("wss://pipeline.vrchat.cloud/?authToken=" + Config.AuthCookie, FriendRequestHandler.OnWebsocketRequest);
             _websocket.Connect();
-            string userinfojson = HClient.GetLocalUser();
+            string userinfojson = HClient.GetInstance().GetLocalUser();
 
             VRCUser.CreateVRCUser(userinfojson);
 
@@ -30,7 +30,7 @@ namespace Zuxi.OSC.Modules.FriendRequests
 
             ChatboxManager.AddNewMessageToChatboxQue(string.Format("Current Friends: {0}", VRCUser.CurrentUser.Friends.Count));
 
-            FriendRequestHandler.FetchVRChatRequestsAndAcceptAll();
+            FriendRequestHandler.FetchVrChatRequestsAndAcceptAll();
 
             return true;
         }
