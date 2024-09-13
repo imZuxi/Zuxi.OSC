@@ -1,5 +1,4 @@
 ﻿using BuildSoft.VRChat.Osc.Chatbox;
-using WebSocketSharp;
 using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
 using Zuxi.OSC.utility;
@@ -8,7 +7,9 @@ namespace Zuxi.OSC
 {
     internal class ChatboxManager
     {
-        public static readonly List<string> ChatboxQue = new();
+        internal static readonly List<string> ChatboxQue = new();
+        private static string _lastSong = "";
+   
         public static void SendToChatBox(string chatboxText, bool bypass = false)
         {
             if (string.IsNullOrEmpty(chatboxText) && !bypass)
@@ -21,15 +22,16 @@ namespace Zuxi.OSC
             OscChatbox.SendMessage(chatboxText, direct: true);
         }
 
-      
+
         public static void UpdateChatboxFunc()
         {
-            // NOTE TO SELF THIS WILL CAUSE A RACE CONTIDION PLEASE FIX (when something calles add new messages to chatboxque while its proccesing)
+            // NOTE TO SELF THIS WILL CAUSE A RACE CONTIDION PLEASE FIX
+            // (when something calles add new messages to chatboxque while its proccesing)
             if (ChatboxQue.Count > 0)
             {
                 SendToChatBox(ChatboxQue[0]);
                 // OBSHook64.dll (Real)
-              //  File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
+                //  File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
                 ChatboxQue.RemoveAt(0);
 
                 return;
@@ -59,15 +61,17 @@ namespace Zuxi.OSC
             if (Program.NormalChatbox)
             {
                 string currentSong = MediaPlayback.GetCurrentSong();
-                if (!string.IsNullOrEmpty(currentSong))
+                if (!string.IsNullOrEmpty(currentSong) && _lastSong != currentSong)
                 {
+                    if (GeneralUtils.IsInVR())
+                        _lastSong = currentSong;
                     ChatboxText += $"[ Current Song ] \v {currentSong}";
                 }
 
                 if (!IsInVR)
                 {
                     var ProgramWindow = ActiveWindow.Get();
-                    
+
                     if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) && Console.Title != ProgramWindow)
                     {
                         if (!string.IsNullOrEmpty(currentSong))
@@ -77,37 +81,24 @@ namespace Zuxi.OSC
                         ChatboxText += $"[ Current Window ]: \v {ProgramWindow}";
                     }
                 }
-                #region Broken Will Fix
-                //TODO: dont fix jk please fix should be in above if loop
-                /*  
+                #region Broken Will NOT Fix
+                //TODO: dont fix jk please fix should be in above if loop edit: BROKEN CANNOT BE ASKED TO FIX IT feel
+                //free to fix it  
 
-                   // SYSINFO
+                //  ChatboxText += "\v";
+                //  ChatboxText += "[ System Info ]\v ";
+                //  float cpuUsage = SystemInfo.GetCpuUsage();
+                //  SystemInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
+                //  ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
 
-
-                   if (!string.IsNullOrEmpty(ProgramWindow))
-                   {
-                       ChatboxText += "\v";
-                   }
-                 */
-                // ChatboxText += "[ System Info ]\v ";
-                //   float cpuUsage = SysInfo.GetCpuUsage();
-                // SysInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
-                // ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
-
-                // Get Memory Usage 
-                //Console.WriteLine($"Memory Usage: ");
+                //  Get Memory Usage 
+                //  Console.WriteLine($"Memory Usage: ");
                 #endregion
             }
 
             string FileText = System.IO.File.ReadAllText(System.IO.Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
             if (!string.IsNullOrEmpty(FileText))
                 ChatboxText += "\v\v" + FileText.Replace("{{env.newline}}", "\v");
-
-            #region Legacy Code
-
-            //  ChatboxText += "\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v\v";
-
-            #endregion
             SendToChatBox(ChatboxText);
         }
 
