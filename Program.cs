@@ -15,15 +15,22 @@ namespace Zuxi.OSC
         {
             try
             {
-            
-                Console.WriteLine(ActiveWindow.Get());
+                // Register Ctrl + C
                 Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress!);
+                // Call some modules early to ensure they get the correct info and arent null durring console loop
+                Console.WriteLine(ActiveWindow.Get());
                 Console.WriteLine(MediaPlayback.GetCurrentSong());
+            
+                // Set the current directory to %appdata%/zuxi/apps/Zuxi.OSC 
                 Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
+                // Load Config ie AuthToken.
                 Config.LoadData();
+               
                 Console.ForegroundColor = ConsoleColor.Cyan;
-                OscConnectionSettings.SendPort = 9000;
+                // Set the VRChat port
+                OscConnectionSettings.SendPort = Config.VRChatOSCPort;
 
+                // launch arg checks
                 if (Environment.CommandLine.ToLower().Contains("--zreqo"))
                 {
                     Console.WriteLine("Normal chat box Disabled...");
@@ -37,9 +44,10 @@ namespace Zuxi.OSC
                 }
                 else
                 {
+                    // start heartrate provider
                     HeartBeat.CreateHeartRate();
                 }
-
+                // Check if in VR then start chatbox & friend request Module 
                 ChatboxManager.IsInVR = GeneralUtils.IsInVR();
                 ChatboxManager.AddNewMessageToChatboxQue("Hello World! OSC Ready...");
                 ChatboxManager.Start();

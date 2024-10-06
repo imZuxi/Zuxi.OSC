@@ -12,9 +12,22 @@ namespace Zuxi.OSC.utility
         public static string HypeRateID { get; set; }
         public static string HypeRateSecretToken { get; set; }
         public static string Bio { get; set; }
+
+        public static int VRChatOSCPort { get; set; } = 9000;
         public static void SaveData()
         {
-            string jsonData = JsonConvert.SerializeObject(new { AuthCookie, twoFactorAuthCookie, HypeRateID, HypeRateSecretToken, Bio, IgnoredFriendRequests, }, Formatting.Indented);
+            string jsonData = JsonConvert.SerializeObject(new
+            {
+                AuthCookie,
+                twoFactorAuthCookie,
+                HypeRateID,
+                HypeRateSecretToken,
+                Bio,
+                VRChatOSCPort,
+                // ALWAYS ADD BIG LIST AT THE BOTTOM
+                IgnoredFriendRequests
+          
+            }, Formatting.Indented);
             File.WriteAllText(filePath, jsonData);
         }
 
@@ -23,7 +36,16 @@ namespace Zuxi.OSC.utility
             if (File.Exists(filePath))
             {
                 string jsonData = File.ReadAllText(filePath);
-                var data = JsonConvert.DeserializeAnonymousType(jsonData, new { AuthCookie = "", twoFactorAuthCookie, IgnoredFriendRequests = new List<string>(), HypeRateID = "", HypeRateSecretToken = "", Bio = "" });
+                var data = JsonConvert.DeserializeAnonymousType(jsonData, new
+                {
+                    AuthCookie = "",
+                    twoFactorAuthCookie,
+                    IgnoredFriendRequests = new List<string>(),
+                    HypeRateID = "",
+                    HypeRateSecretToken = "",
+                    Bio = "",
+                    VRChatOSCPort = 9000
+                });
 
                 AuthCookie = data.AuthCookie;
                 IgnoredFriendRequests = data.IgnoredFriendRequests;
@@ -31,6 +53,10 @@ namespace Zuxi.OSC.utility
                 HypeRateSecretToken = data.HypeRateSecretToken;
                 twoFactorAuthCookie = data.twoFactorAuthCookie;
                 Bio = data.Bio;
+                VRChatOSCPort = data.VRChatOSCPort;
+
+                if (VRChatOSCPort == 0) VRChatOSCPort = 9000;
+                SaveData();
             }
             else
             {
@@ -40,13 +66,14 @@ namespace Zuxi.OSC.utility
                 HypeRateSecretToken = "";
                 twoFactorAuthCookie = "";
                 Bio = "";
+                VRChatOSCPort = 9000;
                 SaveData();
             }
         }
 
-        public static void AddUserToIgnored(string UID)
+        public static void AddUserToIgnored(string userId)
         {
-            IgnoredFriendRequests.Add(UID);
+            IgnoredFriendRequests.Add(userId);
             SaveData();
         }
     }

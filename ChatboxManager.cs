@@ -16,6 +16,7 @@ namespace Zuxi.OSC
             {
                 // Bail Early no update saves VRChat Chat box from throwing a spam error
                 return;
+                chatboxText = ""; 
             }
 
             Console.WriteLine(chatboxText);
@@ -31,7 +32,7 @@ namespace Zuxi.OSC
             {
                 SendToChatBox(ChatboxQue[0]);
                 // OBSHook64.dll (Real)
-                //  File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
+                // File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
                 ChatboxQue.RemoveAt(0);
 
                 return;
@@ -63,7 +64,7 @@ namespace Zuxi.OSC
                 string currentSong = MediaPlayback.GetCurrentSong();
                 if (!string.IsNullOrEmpty(currentSong) && _lastSong != currentSong)
                 {
-                    if (GeneralUtils.IsInVR())
+                    if (IsInVR)
                         _lastSong = currentSong;
                     ChatboxText += $"[ Current Song ] \v {currentSong}";
                 }
@@ -118,7 +119,7 @@ namespace Zuxi.OSC
 
             timer = new System.Timers.Timer();
 
-            timer.Interval = 7000; // 7 seconds seems to be a safe value to update at
+            timer.Interval = 5000; // 7 seconds seems to be a safe value to update at
 
             timer.Elapsed += (s, e) => UpdateChatboxFunc();
 
