@@ -50,7 +50,7 @@ namespace Zuxi.OSC.Modules
             return null;
 
         }
-        static string[] BlacklistedWindows = { "vrchat", "task switching", "search" };
+        static string[] BlacklistedWindows = { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass" };
 
         private static void GetLastIndex(string input, char replace, out string output)
         {
