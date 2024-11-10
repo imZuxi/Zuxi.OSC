@@ -1,15 +1,21 @@
-﻿using Newtonsoft.Json;
+﻿// /*
+//  *
+//  * Zuxi.OSC - PhxReplyModel.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
+
+using Newtonsoft.Json;
 
 namespace VRCHypeRate.HeartRateProvider.HypeRate.Models;
 
 public class PhxReplyModel
 {
-    [JsonProperty("payload")]
-    public PhxReplyPayload Payload = null!;
+    [JsonProperty("payload")] public PhxReplyPayload Payload = null!;
 }
 
 public class PhxReplyPayload
 {
-    [JsonProperty("status")]
-    public string Status = null!;
+    [JsonProperty("status")] public string Status = null!;
 }

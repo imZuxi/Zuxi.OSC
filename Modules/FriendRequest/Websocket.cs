@@ -1,17 +1,13 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Threading.Tasks;
-using WebSocketSharp;
+﻿// /*
+//  *
+//  * Zuxi.OSC - Websocket.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
 
-namespace Zuxi.OSC.Modules.FriendRequests
+namespace Zuxi.OSC.Modules.FriendRequests;
+
+internal class VRCWS
 {
-
-    internal class VRCWS
-    {
-        
-
-    }
-
 }
-
-

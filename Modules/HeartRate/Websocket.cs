@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using WebSocketSharp;
+﻿// /*
+//  *
+//  * Zuxi.OSC - Websocket.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
 
-namespace Zuxi.OSC.HeartRate
-{
-    
-
-}
-
+namespace Zuxi.OSC.HeartRate;

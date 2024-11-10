@@ -1,10 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Linq;
+﻿// /*
+//  *
+//  * Zuxi.OSC - ActiveWindow.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
+
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Zuxi.OSC.Modules
 {
@@ -18,7 +21,6 @@ namespace Zuxi.OSC.Modules
 
         internal static string Get()
         {
-
             IntPtr hWnd = GetForegroundWindow();
 
             if (hWnd != IntPtr.Zero)
@@ -29,28 +31,27 @@ namespace Zuxi.OSC.Modules
                 if (GetWindowText(hWnd, title, nChars) > 0)
                 {
                     var WindowName = title.ToString();
-                    if (BlacklistedWindows.Any(window => WindowName.ToLower().Contains(window.ToLower())))
-                    {
-                        return null;
-                    }
+                    if (BlacklistedWindows.Any(window => WindowName.ToLower().Contains(window.ToLower()))) return null;
 
                     if (WindowName == "Cider") return "Apple Music";
-                   
+
                     GetLastIndex(WindowName, '\\', out WindowName);
                     if (WindowName.Contains("Chrome") || WindowName.Contains("FireFox"))
                         GetLastIndex(WindowName, '-', out WindowName);
                     if (WindowName.Contains("Brave"))
                         GetFirstIndex(WindowName, '-', out WindowName);
                     Replace(WindowName, "Lite", "", out WindowName);
-                    
+
                     WindowName.Replace(".exe", "");
                     return WindowName.Trim();
                 }
             }
-            return null;
 
+            return null;
         }
-        static string[] BlacklistedWindows = { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass" };
+
+        private static string[] BlacklistedWindows =
+            { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass" };
 
         private static void GetLastIndex(string input, char replace, out string output)
         {
@@ -66,23 +67,4 @@ namespace Zuxi.OSC.Modules
             output = input.Replace(oldvalue, newvalue);
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-

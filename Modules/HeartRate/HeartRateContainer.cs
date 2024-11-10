@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// /*
+//  *
+//  * Zuxi.OSC - HeartRateContainer.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
 
-namespace Zuxi.OSC.HeartRate
+namespace Zuxi.OSC.HeartRate;
+
+public class HRContainer
 {
-    public class HRContainer
-    {
-        static int HeartBeat = 0;
-    }
+    private static int HeartBeat = 0;
 }

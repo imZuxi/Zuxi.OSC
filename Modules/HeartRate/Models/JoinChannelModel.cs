@@ -1,20 +1,24 @@
-﻿using Newtonsoft.Json;
+﻿// /*
+//  *
+//  * Zuxi.OSC - JoinChannelModel.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
+
+using Newtonsoft.Json;
 
 namespace VRCHypeRate.HeartRateProvider.HypeRate.Models;
 
 public class JoinChannelModel
 {
-    [JsonProperty("event")]
-    private string Event = "phx_join";
+    [JsonProperty("event")] private string Event = "phx_join";
 
-    [JsonProperty("payload")]
-    private JoinChannelPayload Payload = new();
+    [JsonProperty("payload")] private JoinChannelPayload Payload = new();
 
-    [JsonProperty("ref")]
-    private int Ref;
+    [JsonProperty("ref")] private int Ref;
 
-    [JsonProperty("topic")]
-    private string topic = null!;
+    [JsonProperty("topic")] private string topic = null!;
 
     [JsonIgnore]
     public string Id
@@ -23,4 +27,6 @@ public class JoinChannelModel
     }
 }
 
-public class JoinChannelPayload { }
+public class JoinChannelPayload
+{
+}

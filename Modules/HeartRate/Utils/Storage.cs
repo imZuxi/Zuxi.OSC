@@ -1,6 +1,12 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
+﻿// /*
+//  *
+//  * Zuxi.OSC - Storage.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
+
+using Newtonsoft.Json;
 
 namespace VRCHypeRate.Utils;
 
@@ -21,7 +27,7 @@ public static class Storage
 
     public static void CreateOrAppendFile(string relativeFilePath, List<string> lines)
     {
-        using var sw = File.AppendText(relativeFilePath); 
+        using var sw = File.AppendText(relativeFilePath);
         lines.ForEach(line => sw.WriteLine(line));
     }
 }

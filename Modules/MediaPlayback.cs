@@ -1,57 +1,108 @@
-﻿using Windows.Media.Control;
-namespace Zuxi.OSC.Modules
+﻿// /*
+//  *
+//  * Zuxi.OSC - MediaPlayback.cs
+//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * https://zuxi.dev
+//  *
+//  */
+
+using Windows.Media.Control;
+
+namespace Zuxi.OSC.Modules;
+
+internal class MediaPlayback
 {
-    internal class MediaPlayback
+    // Credits https://github.com/VolcanicArts/VRCOSC/blob/ad33e06dcfbbc5497f07f2f29761842dcdaa1bdb/VRCOSC.Modules/Counter/CounterModule.cs#L19
+    private const string progress_line = "\u2501";
+    private const string progress_dot = "\u25CF";
+    private const string progress_start = "\u2523";
+    private const string progress_end = "\u252B";
+
+    private const int progress_resolution = 10;
+
+    // https://stackoverflow.com/questions/57580053/
+    public static string GetCurrentSong()
     {
-        // https://stackoverflow.com/questions/57580053/
-        public static string GetCurrentSong()
+        // NO IM NOT MAKING THIS WHOLE APP ASYNC ISTG
+        return Task.Run(async () =>
         {
-            // NO IM NOT MAKING THIS WHOLE APP ASYNC ISTG
-            return Task.Run(async () =>
+            try
             {
-                // GOD THIS IS SO UNOPTIMIZXED HOLY but cannot be asked to fix
-                // btw this took 3 hours to figure out since this project needed to be upgraded to .net core so i used net 8 org now 6 lmao 
-                try
-                {
-                    var gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
-                    var currentsession = gsmtcsm.GetCurrentSession();
-                    if (currentsession == null)
-                    {
-                        return "";
-                    }
-                    var playbackInfo = currentsession.GetPlaybackInfo();
-                    Console.WriteLine(playbackInfo.PlaybackStatus.ToString());
-                    if (playbackInfo.PlaybackStatus == GlobalSystemMediaTransportControlsSessionPlaybackStatus.Paused)
-                    {
-                        return "";
-                    }
-                    var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
-                    
-                    // Apple Music is kinda stupid ngl this is to fix it i know its stupid idc
-                    string artist = string.IsNullOrEmpty(mediaProperties.Artist) ? GetStringBeforeFirstDash(mediaProperties.AlbumArtist) : mediaProperties.Artist;
-                    return string.Format("{1} - {0}", mediaProperties.Title, artist);
-                }
-                catch (Exception e)
-                {
-                    return "";
-                }
-            }).Result;
-        }
+                var gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+                var currentsession = gsmtcsm.GetCurrentSession();
+                if (currentsession == null) return "";
+                var playbackInfo = currentsession.GetPlaybackInfo();
+                Console.WriteLine(playbackInfo.PlaybackStatus.ToString());
+                if (playbackInfo.PlaybackStatus ==
+                    GlobalSystemMediaTransportControlsSessionPlaybackStatus.Paused) return "";
+                var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
 
-        private static async Task<GlobalSystemMediaTransportControlsSessionManager> GetSystemMediaTransportControlsSessionManager() =>
-        await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
-
-        private static async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(GlobalSystemMediaTransportControlsSession session) =>
-            await session.TryGetMediaPropertiesAsync();
-
-        static string GetStringBeforeFirstDash(string input)
-        {
-            int dashIndex = input.IndexOf('—');
-            if (dashIndex >= 0)
-            {
-                return input.Substring(0, dashIndex);
+                // Apple Music is kinda stupid ngl this is to fix it i know its stupid idc
+                var artist = string.IsNullOrEmpty(mediaProperties.Artist)
+                    ? GetStringBeforeFirstDash(mediaProperties.AlbumArtist)
+                    : mediaProperties.Artist;
+                return string.Format("{1} - {0}", mediaProperties.Title, artist);
             }
-            return input;  // If no dash is found, return the whole input string
-        }
+            catch (Exception e)
+            {
+                return "";
+            }
+        }).Result;
+    }
+
+    internal static float GetPlaybackProgress()
+    {
+        return Task.Run(async () =>
+        {
+            var gsmtcsm = await GetSystemMediaTransportControlsSessionManager();
+            var currentsession = gsmtcsm.GetCurrentSession();
+            if (currentsession == null) return 0f; // Return 0 if no session is active
+
+            var timelineProperties = currentsession.GetTimelineProperties();
+            var position = timelineProperties.Position;
+            var endTime = timelineProperties.EndTime;
+
+            if (endTime == TimeSpan.Zero) return 0f; // Return 0 for live/streaming content or unknown duration
+
+            // Calculate progress as a float (0.0 to 1.0)
+            var progress = (float)(position.TotalSeconds / endTime.TotalSeconds);
+            return progress;
+        }).Result;
+    }
+
+    // Credits https://github.com/VolcanicArts/VRCOSC/blob/ad33e06dcfbbc5497f07f2f29761842dcdaa1bdb/VRCOSC.Modules/Counter/CounterModule.cs#L179
+    internal static string getProgressVisual()
+    {
+        var percentage = GetPlaybackProgress();
+        var progressPercentage = progress_resolution * percentage;
+        var dotPosition = (int)(MathF.Floor(progressPercentage * 10f) / 10f);
+
+        var visual = progress_start;
+
+        for (var i = 0; i < progress_resolution; i++) visual += i == dotPosition ? progress_dot : progress_line;
+
+        visual += progress_end;
+
+        return visual;
+    }
+
+
+    private static async Task<GlobalSystemMediaTransportControlsSessionManager>
+        GetSystemMediaTransportControlsSessionManager()
+    {
+        return await GlobalSystemMediaTransportControlsSessionManager.RequestAsync();
+    }
+
+    private static async Task<GlobalSystemMediaTransportControlsSessionMediaProperties> GetMediaProperties(
+        GlobalSystemMediaTransportControlsSession session)
+    {
+        return await session.TryGetMediaPropertiesAsync();
+    }
+
+    private static string GetStringBeforeFirstDash(string input)
+    {
+        var dashIndex = input.IndexOf('—');
+        if (dashIndex >= 0) return input.Substring(0, dashIndex);
+        return input; // If no dash is found, return the whole input string
     }
 }
