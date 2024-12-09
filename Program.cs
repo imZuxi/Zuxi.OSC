@@ -30,7 +30,7 @@ internal class Program
             Console.WriteLine(MediaPlayback.GetCurrentSong());
             Console.WriteLine(MediaPlayback.getProgressVisual());
 
-            // Set the current directory to %appdata%/zuxi/apps/Zuxi.OSC 
+            // Set the current directory to %appdata%/zuxi/apps/Zuxi.OSC
             Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
             // Load Config ie AuthToken.
             Config.LoadData();
@@ -53,15 +53,17 @@ internal class Program
             }
             else
             {
-                // start heartrate provider
-                HeartBeat.CreateHeartRate();
+                // Start HeartBeat provider on new non blocking thread
+                 new Task ( () => { HeartBeat.CreateHeartRate(); } ) .Start();
             }
 
-            // Check if in VR then start chatbox & friend request Module 
+            // Check if in VR then start chatbox & friend request Module
             ChatboxManager.IsInVR = GeneralUtils.IsInVR();
             ChatboxManager.AddNewMessageToChatboxQue("Hello World! OSC Ready...");
             ChatboxManager.Start();
-            FriendsMain.Initialize();
+            // Completely Safe to init on main thread
+           FriendsMain.Initialize();
+
             while (true)
             {
             }

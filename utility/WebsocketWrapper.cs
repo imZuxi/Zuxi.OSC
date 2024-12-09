@@ -13,45 +13,53 @@ namespace Zuxi.OSC.utility;
 
 internal class WebsocketWrapper
 {
-    internal bool HasConn;
+    private bool _hasConnected;
     internal bool Shutdown;
-    internal WebSocket wss;
-    internal string ConnectionURL;
-
-    internal Action<string> OnMessageReceved;
-
+    private readonly WebSocket _wss;
+    private string ConnectionURL;
+    private bool _attemptingConnect;
+    private readonly Action<string> _onMessageReceved;
+    private int _reconnectionAttempts = 0;
     public WebsocketWrapper(string URI, Action<string> onMessageReceved, Action? onConnected = null)
     {
-        OnMessageReceved = onMessageReceved;
-        wss = new WebSocket(URI);
+        _onMessageReceved = onMessageReceved;
+        _wss = new WebSocket(URI);
 
         ConnectionURL = URI.Split('?').First();
 
-        wss.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
+        _wss.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
 
-        wss.OnClose += (sender, e) =>
+        _wss.OnClose += (sender, e) =>
         {
+            Console.WriteLine($"{ConnectionURL} Has Closed the Connection attempting reconnect!");
             if (Shutdown) Console.WriteLine("ShutDown Connection");
-            if (!wss.IsAlive)
+            if (!_wss.IsAlive)
+            {
                 Console.WriteLine($"Websocket {ConnectionURL} Reconnecting... ");
-            Reconnect();
+                Reconnect();
+            }
         };
-        wss.OnOpen += (sender, e) =>
+        _wss.OnOpen += (sender, e) =>
         {
-            if (!HasConn)
+            _attemptingConnect = false;
+            if (!_hasConnected)
                 Console.WriteLine($"Connected to {ConnectionURL}");
-            HasConn = true;
+
+            _hasConnected = true;
+
             if (onConnected is not null)
                 onConnected.Invoke();
         };
-        wss.OnMessage += Ws_OnMessage;
-        wss.Log.Output = (_, __) => { };
+        _wss.OnMessage += Ws_OnMessage;
+        _wss.Log.Output = (_, __) => { };
+
+      
     }
 
     internal void Connect()
     {
         Console.WriteLine("Connecting to: " + ConnectionURL);
-        wss.Connect();
+        _wss.Connect();
     }
 
     internal WebsocketWrapper GetInstance()
@@ -61,32 +69,39 @@ internal class WebsocketWrapper
 
     internal void Send(object data)
     {
-        wss.Send(JsonConvert.SerializeObject(data));
+        _wss.Send(JsonConvert.SerializeObject(data));
     }
 
-    private static int reconnectcount = 0;
+
 
     protected internal void Reconnect()
     {
         try
         {
-            reconnectcount++;
-            if (reconnectcount >= 10) throw new Exception($"Failed To Connect to  {wss.Url}");
-            Task.Delay(50000);
-            if (!wss.IsAlive)
-                wss.Connect();
+            if (_attemptingConnect)
+                return;
+            _attemptingConnect = true;
+
+
+            _reconnectionAttempts++;
+            if (_reconnectionAttempts >= 10) throw new Exception($"Failed To Connect to  {_wss.Url}");
+
+            if (_hasConnected)
+                Task.Delay(50000).Wait();
+            if (!_wss.IsAlive)
+                _wss.Connect();
         }
         catch (Exception error)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("WOAH EXCEPTION THROWN WHILE TRYING TO RECONNECT => " + error);
             Console.ForegroundColor = ConsoleColor.Cyan;
-            wss.Connect();
+            _wss.Connect();
         }
     }
 
-    internal void Ws_OnMessage(object sender, MessageEventArgs e)
+    private void Ws_OnMessage(object sender, MessageEventArgs e)
     {
-        OnMessageReceved.Invoke(e.Data.ToString());
+        _onMessageReceved.Invoke(e.Data.ToString());
     }
 }

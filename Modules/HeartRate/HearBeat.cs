@@ -21,17 +21,17 @@ public class HeartBeat
     private const string HypeRateUri = "wss://app.hyperate.io/socket/websocket?token=";
     private const int HeartbeatInternal = 30000;
     private static string Id;
-    private static Timer? heartBeatTimer;
-    public static int lasthr = 0;
-    internal static WebsocketWrapper I_Websocket = null;
+    private static Timer? _heartBeatTimer;
+    public static int Lasthr = 0;
+    private static WebsocketWrapper Websocket = null;
 
     public static void CreateHeartRate()
     {
         Id = Config.HypeRateID;
         Console.WriteLine(HypeRateUri + Config.HypeRateSecretToken.RemoveNonUtf8Chars());
-        I_Websocket = new WebsocketWrapper(HypeRateUri + Config.HypeRateSecretToken.RemoveNonUtf8Chars(),
+        Websocket = new WebsocketWrapper(HypeRateUri + Config.HypeRateSecretToken.RemoveNonUtf8Chars(),
             OnWsMessageReceived, OnWsConnected);
-        I_Websocket.Connect();
+        Websocket.Connect();
     }
 
     public static void OnWsConnected()
@@ -44,7 +44,7 @@ public class HeartBeat
     protected static void OnWsDisconnected()
     {
         Console.WriteLine("Disconnected from the HypeRate websocket");
-        heartBeatTimer?.Dispose();
+        _heartBeatTimer?.Dispose();
     }
 
     internal static void OnWsMessageReceived(string message)
@@ -69,19 +69,19 @@ public class HeartBeat
 
     private static void initHeartBeat()
     {
-        heartBeatTimer = new Timer(sendHeartBeat, null, HeartbeatInternal, Timeout.Infinite);
+        _heartBeatTimer = new Timer(sendHeartBeat, null, HeartbeatInternal, Timeout.Infinite);
     }
 
     private static void sendHeartBeat(object? _)
     {
-        Console.WriteLine("Sending HypeRate websocket heartbeat");
-        I_Websocket.Send(new HeartBeatModel());
-        heartBeatTimer?.Change(HeartbeatInternal, Timeout.Infinite);
+     //   Console.WriteLine("Sending HypeRate websocket heartbeat");
+        Websocket.Send(new HeartBeatModel());
+        _heartBeatTimer?.Change(HeartbeatInternal, Timeout.Infinite);
     }
 
     private static void sendJoinChannel()
     {
-        while (I_Websocket is null)
+        while (Websocket is null)
         {
         }
 
@@ -90,19 +90,19 @@ public class HeartBeat
         {
             Id = Id
         };
-        I_Websocket.Send(joinChannelModel);
+        Websocket.Send(joinChannelModel);
     }
 
     private static void handlePhxReply(PhxReplyModel reply)
     {
-        Console.WriteLine($"Status of reply: {reply.Payload.Status}");
+        // Console.WriteLine($"Status of reply: {reply.Payload.Status}");
 
 
         var timeDifference = DateTime.Now - lasthrt;
-        Console.WriteLine($"last hr update: {timeDifference.TotalSeconds} s");
+        // Console.WriteLine($"last hr update: {timeDifference.TotalSeconds} s");
         // Check if the time difference is greater than 1 minute
 
-        if (lasthr == 0)
+        if (Lasthr == 0)
         {
             lasthrt = DateTime.Now;
             return;
@@ -112,7 +112,7 @@ public class HeartBeat
         {
             lasthrt = DateTime.Now;
             Console.WriteLine("Reseting HR to 0 since its been a while since hr updated");
-            lasthr = 0;
+            Lasthr = 0;
         }
     }
 
@@ -122,6 +122,6 @@ public class HeartBeat
 
         var heartRate = update.Payload.HeartRate;
         Console.WriteLine($"Received heartrate {heartRate}");
-        lasthr = heartRate;
+        Lasthr = heartRate;
     }
 }

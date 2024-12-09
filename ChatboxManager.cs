@@ -27,8 +27,10 @@ internal class ChatboxManager
             chatboxText = "";
         }
 
-        Console.WriteLine(chatboxText);
-        OscChatbox.SendMessage(chatboxText, true);
+        // This is to Debug the Chatbox however its not needed in release but since i un in debug mode more often then not id rather comment this out
+
+        // Console.WriteLine(chatboxText);
+        OscChatbox.SendMessage(chatboxText.Trim(), true);
     }
 
 
@@ -56,8 +58,8 @@ internal class ChatboxManager
 
         if (Program.HeartRate)
         {
-            if (HeartBeat.lasthr != 0)
-                ChatboxText += $"{HeartBeat.lasthr}❤️\v";
+            if (HeartBeat.Lasthr != 0)
+                ChatboxText += $"{HeartBeat.Lasthr}❤️\v";
         }
         else
         {
@@ -73,7 +75,7 @@ internal class ChatboxManager
                     _lastSong = currentSong;
                 ChatboxText += $"[ Current Song ] \v {currentSong}";
 
-                if (!IsInVR)
+               if (!IsInVR)
                     ChatboxText += $"\v{MediaPlayback.getProgressVisual()}";
             }
 
@@ -82,7 +84,7 @@ internal class ChatboxManager
                 var ProgramWindow = ActiveWindow.Get();
 
                 if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) &&
-                    Console.Title != ProgramWindow)
+                    Console.Title != ProgramWindow && ProgramWindow.Contains(currentSong.Split('-').FirstOrDefault()))
                 {
                     if (!string.IsNullOrEmpty(currentSong)) ChatboxText += "\v";
                     ChatboxText += $"[ Current Window ]: \v {ProgramWindow}";
@@ -92,7 +94,7 @@ internal class ChatboxManager
             #region Broken Will NOT Fix
 
             //TODO: dont fix jk please fix should be in above if loop edit: BROKEN CANNOT BE ASKED TO FIX IT feel
-            //free to fix it  
+            //free to fix it
 
             //  ChatboxText += "\v";
             //  ChatboxText += "[ System Info ]\v ";
@@ -100,7 +102,7 @@ internal class ChatboxManager
             //  SystemInfo.GetMemoryUsage(out ulong totalMemory, out ulong usedMemory, out float memoryUsage);
             //  ChatboxText += $"CPU: {100 - cpuUsage:F0}% M: {usedMemory / (1024.0 * 1024.0 * 1024.0):F1} / {totalMemory / (1024.0 * 1024.0 * 1024.0):F1} GB";
 
-            //  Get Memory Usage 
+            //  Get Memory Usage
             //  Console.WriteLine($"Memory Usage: ");
 
             #endregion

@@ -32,7 +32,7 @@ internal class MediaPlayback
                 var currentsession = gsmtcsm.GetCurrentSession();
                 if (currentsession == null) return "";
                 var playbackInfo = currentsession.GetPlaybackInfo();
-                Console.WriteLine(playbackInfo.PlaybackStatus.ToString());
+             //   Console.WriteLine(playbackInfo.PlaybackStatus.ToString());
                 if (playbackInfo.PlaybackStatus ==
                     GlobalSystemMediaTransportControlsSessionPlaybackStatus.Paused) return "";
                 var mediaProperties = await GetMediaProperties(gsmtcsm.GetCurrentSession());
@@ -70,12 +70,17 @@ internal class MediaPlayback
         }).Result;
     }
 
+    private static float LastPlayBackPercentage = 1000000f; // some high number should prevent it not initializing properly
     // Credits https://github.com/VolcanicArts/VRCOSC/blob/ad33e06dcfbbc5497f07f2f29761842dcdaa1bdb/VRCOSC.Modules/Counter/CounterModule.cs#L179
     internal static string getProgressVisual()
     {
         var percentage = GetPlaybackProgress();
+        if (LastPlayBackPercentage == percentage) return "";
+
+        LastPlayBackPercentage = percentage;
         var progressPercentage = progress_resolution * percentage;
         var dotPosition = (int)(MathF.Floor(progressPercentage * 10f) / 10f);
+        if (dotPosition < 0 ) return "";
 
         var visual = progress_start;
 
