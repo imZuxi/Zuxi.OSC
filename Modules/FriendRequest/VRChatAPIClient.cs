@@ -1,10 +1,9 @@
-﻿// /*
-//  *
-//  * Zuxi.OSC - HClient.cs
-//  * Copyright 2023 - 2024 Zuxi and contributors
-//  * https://zuxi.dev
-//  *
-//  */
+﻿/*
+ * Zuxi.OSC - VRChatAPIClient.cs
+ * Copyright 2023 - 2024 Zuxi and contributors
+ * https://zuxi.dev
+ *
+ */
 
 using System.Net;
 using System.Text;
@@ -13,12 +12,19 @@ using Zuxi.OSC.utility;
 
 namespace Zuxi.OSC.Modules.FriendRequests;
 
+/// <summary>
+/// A client for interacting with the VRChat API, providing methods for authentication, user data retrieval, 
+/// notifications, and other API functionalities.
+/// </summary>
 internal class VRChatAPIClient
 {
     private static VRChatAPIClient VrChatApiClient { get; set; }
     internal HttpClient _httpClient { get; set; }
     private const string _VRChatBaseEndpoint = "https://api.vrchat.cloud/api/1/";
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VRChatAPIClient"/> class with the necessary HTTP headers and cookies.
+    /// </summary>
     public VRChatAPIClient()
     {
         var httpClientHandler = new HttpClientHandler
@@ -34,9 +40,12 @@ internal class VRChatAPIClient
         { Domain = "api.vrchat.cloud", Path = "/" });
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com");
         VrChatApiClient = this;
-
     }
 
+    /// <summary>
+    /// Retrieves the singleton instance of the <see cref="VRChatAPIClient"/> class.
+    /// </summary>
+    /// <returns>The single instance of <see cref="VRChatAPIClient"/>.</returns>
     internal static VRChatAPIClient GetInstance()
     {
         if (VrChatApiClient is null) VrChatApiClient = new VRChatAPIClient();
@@ -44,44 +53,48 @@ internal class VRChatAPIClient
         return VrChatApiClient;
     }
 
-
     /// <summary>
-    /// Checks the authentication status by sending a GET request to the VRChat API.
+    /// Checks the current authentication status with the VRChat API.
     /// </summary>
-    /// <returns>A JSON string containing the authentication status retrieved from the VRChat API.</returns>
+    /// <returns>A JSON string indicating the authentication status.</returns>
     public string CheckAuthStatus()
     {
         return MakeAPIGetRequest("auth");
     }
 
     /// <summary>
-    /// Retrieves the authenticated user's information by sending a GET request to the VRChat API.
+    /// Retrieves the authenticated user's information.
     /// </summary>
-    /// <returns>A JSON string containing the authenticated user's information retrieved from the VRChat API.</returns>
-    public string GetLocalUser()
+    /// <returns>A <see cref="VRCUser"/> object containing the authenticated user's details.</returns>
+    public VRCUser GetLocalUser()
     {
-        return MakeAPIGetRequest("auth/user");
+        return new VRCUser(MakeAPIGetRequest("auth/user"));
     }
 
     /// <summary>
-    /// Retrieves the authenticated user's notifications by sending a GET request to the VRChat API.
+    /// Retrieves notifications for the authenticated user from the VRChat API.
     /// </summary>
-    /// <returns>A JSON string containing the authenticated user's notifications retrieved from the VRChat API.</returns>
+    /// <returns>A JSON string containing user notifications.</returns>
     public string GetUserNotis()
     {
         return MakeAPIGetRequest("auth/user/notifications");
     }
 
     /// <summary>
-    /// Retrieves user information from the VRChat API based on the provided user ID.
+    /// Fetches detailed information about a specific user by their user ID.
     /// </summary>
-    /// <param name="userId">The unique identifier of the VRChat user.</param>
-    /// <returns>A JSON string containing the VRChat user data retrieved from the API.</returns>
+    /// <param name="userId">The unique identifier of the user to retrieve.</param>
+    /// <returns>A <see cref="VRCPlayer"/> object containing user details.</returns>
     public VRCPlayer GetVRCUserByID(string userId)
     {
-        return VRCPlayer.CreateVRCPlayer(MakeAPIGetRequest($"users/{userId}"));
+        return new VRCPlayer(MakeAPIGetRequest($"users/{userId}"));
     }
 
+    /// <summary>
+    /// Accepts a friend request using the provided friend request ID.
+    /// </summary>
+    /// <param name="frid">The friend request ID to accept.</param>
+    /// <returns>True if the friend request was successfully accepted, otherwise false.</returns>
     public bool AcceptRequest(string frid)
     {
         if (!frid.ToLower().Contains("frq_"))
@@ -94,10 +107,10 @@ internal class VRChatAPIClient
     }
 
     /// <summary>
-    /// Sends a GET request to the specified VRChat API endpoint and retrieves data.
+    /// Sends a GET request to the specified VRChat API endpoint and returns the response.
     /// </summary>
-    /// <param name="apiendpoint">The endpoint of the VRChat API to which the request is sent.</param>
-    /// <returns>A JSON response from the VRChat API containing the requested data.</returns>
+    /// <param name="apiendpoint">The API endpoint to query.</param>
+    /// <returns>A JSON string with the API response.</returns>
     public string MakeAPIGetRequest(string apiendpoint)
     {
         var url = "https://api.vrchat.cloud/api/1/" + apiendpoint;
@@ -115,41 +128,35 @@ internal class VRChatAPIClient
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Request to: {0} failed with status code {1} ", apiendpoint, response.StatusCode);
-            //  Console.WriteLine("Request failed with status code: " + response.StatusCode);
             var content = response.Content.ReadAsStringAsync().Result;
             Console.WriteLine("Response content: " + content);
             Console.ForegroundColor = ConsoleColor.Cyan;
             return content;
         }
-
-        return "[]";
     }
 
     /// <summary>
-    /// Sends a PUT request to the specified VRChat API endpoint with the provided data.
+    /// Sends a PUT request to the specified VRChat API endpoint with the provided data payload.
     /// </summary>
-    /// <param name="apiendpoint">The endpoint of the VRChat API to which the request is sent.</param>
-    /// <param name="data">The data to be included in the PUT request.</param>
-    /// <returns>A JSON response from the VRChat API containing the result of the request.</returns>
+    /// <param name="apiendpoint">The API endpoint to query.</param>
+    /// <param name="data">The JSON-formatted payload to include in the PUT request.</param>
+    /// <returns>A JSON string with the API response.</returns>
     public string MakeAPIPutRequest(string apiendpoint, string data)
     {
         var response = _httpClient.PutAsync(_VRChatBaseEndpoint + apiendpoint,
             new StringContent(string.IsNullOrEmpty(data) ? "" : data, Encoding.UTF8, "application/json")).Result;
 
-        // Handle the response
         if (response.IsSuccessStatusCode)
         {
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Successfully Made Request to: {0} ", apiendpoint);
             Console.ForegroundColor = ConsoleColor.Cyan;
             return response.Content.ReadAsStringAsync().Result;
-            ;
         }
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Request to: {0} failed with status code {1} ", apiendpoint, response.StatusCode);
-
             var content = response.Content.ReadAsStringAsync().Result;
             Console.WriteLine("Response content: " + content);
             Console.ForegroundColor = ConsoleColor.Cyan;

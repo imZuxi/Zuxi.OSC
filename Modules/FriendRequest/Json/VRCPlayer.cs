@@ -8,19 +8,28 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
+using static Zuxi.OSC.Modules.FriendRequest.Json.VRCUser;
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
 
+/// <summary>
+/// VRCPlayer for non local user can be friend or non friend however some will not be populated for non friend
+/// </summary>
 public class VRCPlayer
 {
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public static VRCPlayer CreateVRCPlayer(string value)
-    {
-        var _VRCPlayer = JsonConvert.DeserializeObject<VRCPlayer>(value);
+    // updated 12/09/24 7am
+    // @note i will update periodically
 
-        return _VRCPlayer;
+   public VRCPlayer(string user)
+    {
+        File.WriteAllText("VRCPlayer.json", user);
+        JsonConvert.PopulateObject(user, this);
+        
     }
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+  
     public bool AllowAvatarCopying { get; set; }
     public string Bio { get; set; }
     public List<string> BioLinks { get; set; }
@@ -53,6 +62,15 @@ public class VRCPlayer
     public string TravelingToWorld { get; set; }
     public string UserIcon { get; set; }
     public string WorldId { get; set; }
+    public string AgeVerificationStatus { get; set; }
+    public List<string> CurrentAvatarTags { get; set; }
+    public string Platform { get; set; }
+    public string ProfilePicOverrideThumbnail { get; set; }
+    public string Pronouns { get; set; }
+
+
+    public List<Badge> Badges { get; set; }
+    public object LastMobile { get; set; }
 
     private class CustomDateFormatConverter : IsoDateTimeConverter
     {

@@ -28,9 +28,8 @@ public class FriendsMain
         _websocket.Reconnect();
         var userinfojson = VRChatAPIClient.GetInstance().GetLocalUser();
 
-        VRCUser.CreateVRCUser(userinfojson);
 
-        Console.Title = string.Format("Current User {0} | Friend Count {1}", VRCUser.CurrentUser.DisplayName,
+       Console.Title = string.Format("Current User {0} | Friend Count {1}", VRCUser.CurrentUser.DisplayName,
             VRCUser.CurrentUser.Friends.Count);
 
         Console.WriteLine("Current Friends: {0}", VRCUser.CurrentUser.Friends.Count);
