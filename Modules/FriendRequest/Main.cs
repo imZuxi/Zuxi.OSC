@@ -21,13 +21,12 @@ public class FriendsMain
 
         Console.WriteLine("Ignored FriendRequest Count: " + Config.IgnoredFriendRequests.Count);
 
-
-        if (HClient.GetInstance().CheckAuthStatus().Contains("Missing Credentials"))
+         if (VRChatAPIClient.GetInstance().CheckAuthStatus().Contains("Missing Credentials"))
             throw new Exception("Failed Auth Check With VRChat Check Auth Cookie");
         _websocket = new WebsocketWrapper("wss://pipeline.vrchat.cloud/?authToken=" + Config.AuthCookie,
             FriendRequestHandler.OnWebsocketRequest);
-        _websocket.Connect();
-        var userinfojson = HClient.GetInstance().GetLocalUser();
+        _websocket.Reconnect();
+        var userinfojson = VRChatAPIClient.GetInstance().GetLocalUser();
 
         VRCUser.CreateVRCUser(userinfojson);
 

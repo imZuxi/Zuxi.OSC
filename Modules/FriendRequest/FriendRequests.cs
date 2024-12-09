@@ -18,7 +18,7 @@ internal class FriendRequestHandler
     {
         Console.WriteLine("Fetching Friend Requests");
 
-        var userNotifs = HClient.GetInstance().GetUserNotis();
+        var userNotifs = VRChatAPIClient.GetInstance().GetUserNotis();
         List<friendRequest> friendRequests = friendRequest.DecodeJson(userNotifs);
 
         foreach (var friendRequest in friendRequests)
@@ -59,7 +59,7 @@ internal class FriendRequestHandler
             var wf = WebsocketFriend.Create(wsNotification.Content);
             if (!VRCUser.CurrentUser.Friends.Contains(wf.id))
                 return;
-            var vrcUser = HClient.GetInstance().GetVRCUserByID(wf.id);
+            var vrcUser = VRChatAPIClient.GetInstance().GetVRCUserByID(wf.id);
             Console.WriteLine($"{vrcUser.DisplayName} Removed you as a friend!");
         }
     }
@@ -73,7 +73,7 @@ internal class FriendRequestHandler
             return;
         }
 
-        var vrcUser = HClient.GetInstance().GetVRCUserByID(item.SenderUserId);
+        var vrcUser = VRChatAPIClient.GetInstance().GetVRCUserByID(item.SenderUserId);
 
 
         if (VRCUser.CurrentUser.Friends.Contains(vrcUser.Id))
@@ -85,7 +85,7 @@ internal class FriendRequestHandler
 
         if (vrcUser.Tags.Contains("system_trust_basic") || accountAge.TotalDays > 30)
         {
-            if (!HClient.GetInstance().AcceptRequest(item.Id)) return;
+            if (!VRChatAPIClient.GetInstance().AcceptRequest(item.Id)) return;
             VRCUser.CurrentUser.Friends.Add(item.SenderUserId);
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Auto Accepted FriendRequest From {0} id {1} NotiID {2}", item.SenderUsername,

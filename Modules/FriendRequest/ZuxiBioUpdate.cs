@@ -26,7 +26,7 @@ internal class ZuxiBioUpdate
 
         Update.bio = Config.Bio.Replace("{CURRENTFRIENDCOUNT}", VRCUser.CurrentUser.Friends.Count.ToString());
         var json = Newtonsoft.Json.JsonConvert.SerializeObject(Update);
-        var re = HClient.GetInstance().MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
+        var re = VRChatAPIClient.GetInstance().MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
         if (re != "[]")
         {
             VRCUser.CreateVRCUser(re);

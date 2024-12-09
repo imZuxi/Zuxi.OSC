@@ -13,13 +13,13 @@ using Zuxi.OSC.utility;
 
 namespace Zuxi.OSC.Modules.FriendRequests;
 
-internal class HClient
+internal class VRChatAPIClient
 {
-    private static HClient _hClient { get; set; }
+    private static VRChatAPIClient VrChatApiClient { get; set; }
     internal HttpClient _httpClient { get; set; }
     private const string _VRChatBaseEndpoint = "https://api.vrchat.cloud/api/1/";
 
-    public HClient()
+    public VRChatAPIClient()
     {
         var httpClientHandler = new HttpClientHandler
         {
@@ -33,14 +33,15 @@ internal class HClient
         httpClientHandler.CookieContainer.Add(new Cookie("twoFactorAuth", Config.twoFactorAuthCookie)
         { Domain = "api.vrchat.cloud", Path = "/" });
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com");
-        _hClient = this;
+        VrChatApiClient = this;
+
     }
 
-    internal static HClient GetInstance()
+    internal static VRChatAPIClient GetInstance()
     {
-        if (_hClient is null) _hClient = new HClient();
+        if (VrChatApiClient is null) VrChatApiClient = new VRChatAPIClient();
 
-        return _hClient;
+        return VrChatApiClient;
     }
 
 
@@ -118,6 +119,7 @@ internal class HClient
             var content = response.Content.ReadAsStringAsync().Result;
             Console.WriteLine("Response content: " + content);
             Console.ForegroundColor = ConsoleColor.Cyan;
+            return content;
         }
 
         return "[]";
