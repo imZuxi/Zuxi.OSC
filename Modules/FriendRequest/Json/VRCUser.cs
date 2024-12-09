@@ -23,8 +23,7 @@ public class VRCUser
 
     public VRCUser(string user)
     {
-        File.WriteAllText("CurrentUser.json", user);
-        if (CurrentUser != null)
+       if (CurrentUser != null)
         {
             JsonConvert.PopulateObject(JsonConvert.SerializeObject(CurrentUser), this);
         }

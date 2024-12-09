@@ -8,7 +8,6 @@
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 using static Zuxi.OSC.Modules.FriendRequest.Json.VRCUser;
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
@@ -23,8 +22,7 @@ public class VRCPlayer
 
    public VRCPlayer(string user)
     {
-        File.WriteAllText("VRCPlayer.json", user);
-        JsonConvert.PopulateObject(user, this);
+       JsonConvert.PopulateObject(user, this);
         
     }
 

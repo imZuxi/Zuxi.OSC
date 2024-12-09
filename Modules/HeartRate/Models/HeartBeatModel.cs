@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 
 namespace VRCHypeRate.HeartRateProvider.HypeRate.Models;
 
+// credits https://github.com/VolcanicArts/VRCHypeRate
 public class HeartBeatModel
 {
     [JsonProperty("event")] private string Event = "heartbeat";

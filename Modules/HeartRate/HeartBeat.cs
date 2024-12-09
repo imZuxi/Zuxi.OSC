@@ -23,12 +23,11 @@ public class HeartBeat
     private static string Id;
     private static Timer? _heartBeatTimer;
     public static int Lasthr = 0;
-    private static WebsocketWrapper Websocket = null;
+    private static WebsocketWrapper Websocket;
 
     public static void CreateHeartRate()
     {
         Id = Config.HypeRateID;
-        Console.WriteLine(HypeRateUri + Config.HypeRateSecretToken.RemoveNonUtf8Chars());
         Websocket = new WebsocketWrapper(HypeRateUri + Config.HypeRateSecretToken.RemoveNonUtf8Chars(),
             OnWsMessageReceived, OnWsConnected);
         Websocket.Connect();
