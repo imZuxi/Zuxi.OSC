@@ -67,7 +67,7 @@ internal class FriendRequestHandler
 
     private static void AcceptRequest(friendRequest item)
     {
-        if (Config.IgnoredFriendRequests.Contains(item.SenderUserId))
+        if (Config.GetInstance().IgnoredFriendRequests.Contains(item.SenderUserId))
         {
             Console.WriteLine("ignoring Friend Request From " + item.SenderUserId);
             return;
@@ -100,7 +100,7 @@ internal class FriendRequestHandler
         else
         {
             Console.ForegroundColor = ConsoleColor.Red;
-            Config.AddUserToIgnored(vrcUser.Id);
+            Config.GetInstance().AddUserToIgnored(vrcUser.Id);
             Console.WriteLine(
                 "Skipping Accepting Friend Request from user {0} Because there account is still a visiter",
                 item.SenderUsername);
