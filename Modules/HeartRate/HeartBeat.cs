@@ -27,8 +27,8 @@ public class HeartBeat
 
     public static void CreateHeartRate()
     {
-        Id = Config.HypeRateID;
-        Websocket = new WebsocketWrapper(HypeRateUri + Config.HypeRateSecretToken.RemoveNonUtf8Chars(),
+        Id = Config.GetInstance().HypeRateID;
+        Websocket = new WebsocketWrapper(HypeRateUri + Config.GetInstance().HypeRateSecretToken.RemoveNonUtf8Chars(),
             OnWsMessageReceived, OnWsConnected);
         Websocket.Connect();
     }

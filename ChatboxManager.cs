@@ -24,7 +24,6 @@ internal class ChatboxManager
         {
             // Bail Early no update saves VRChat Chat box from throwing a spam error
             return;
-            chatboxText = "";
         }
 
         // This is to Debug the Chatbox however its not needed in release but since i un in debug mode more often then not id rather comment this out
@@ -36,15 +35,12 @@ internal class ChatboxManager
 
     public static void UpdateChatboxFunc()
     {
-        // NOTE TO SELF THIS WILL CAUSE A RACE CONTIDION PLEASE FIX
-        // (when something calles add new messages to chatboxque while its proccesing)
         if (ChatboxQue.Count > 0)
         {
             SendToChatBox(ChatboxQue[0]);
             // OBSHook64.dll (Real)
             // File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
             ChatboxQue.RemoveAt(0);
-
             return;
         }
 

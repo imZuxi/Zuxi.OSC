@@ -33,11 +33,11 @@ internal class Program
             // Set the current directory to %appdata%/zuxi/apps/Zuxi.OSC
             Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
             // Load Config ie AuthToken.
-            Config.LoadData();
+            Config.GetInstance();
 
             Console.ForegroundColor = ConsoleColor.Cyan;
             // Set the VRChat port
-            OscConnectionSettings.SendPort = Config.VRChatOSCPort;
+            OscConnectionSettings.SendPort = Config.GetInstance().VRChatOSCPort;
 
             // launch arg checks
             if (Environment.CommandLine.ToLower().Contains("--zreqo"))

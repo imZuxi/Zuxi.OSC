@@ -1,6 +1,6 @@
 ﻿// /*
 //  *
-//  * Zuxi.OSC - Config.cs
+//  * Zuxi.OSC - Config.GetInstance().cs
 //  * Copyright 2023 - 2024 Zuxi and contributors
 //  * https://zuxi.dev
 //  *
@@ -12,76 +12,50 @@ namespace Zuxi.OSC.utility;
 
 public class Config
 {
-    public static string AuthCookie { get; set; }
-    public static string twoFactorAuthCookie { get; set; }
-    public static List<string> IgnoredFriendRequests { get; set; }
+    private static Config? _instance;
+   
+    public string AuthCookie { get; set; }
+    public string twoFactorAuthCookie { get; set; }
+    public List<string> IgnoredFriendRequests { get; set; }
 
-    private static readonly string filePath = "data.json"; // Change the file path as needed
-    public static string HypeRateID { get; set; }
-    public static string HypeRateSecretToken { get; set; }
-    public static string Bio { get; set; }
+    private readonly string filePath = "data.json"; // Change the file path as needed
+    public string HypeRateID { get; set; }
+    public string HypeRateSecretToken { get; set; }
+    public string Bio { get; set; }
+    public string VRCAuthValue { get; set; }
+    public int VRChatOSCPort { get; set; } = 9000;
 
-    public static int VRChatOSCPort { get; set; } = 9000;
-
-    public static void SaveData()
+    internal void Load()
     {
-        var jsonData = JsonConvert.SerializeObject(new
+        if (File.Exists("data.json"))
         {
-            AuthCookie,
-            twoFactorAuthCookie,
-            HypeRateID,
-            HypeRateSecretToken,
-            Bio,
-            VRChatOSCPort,
-            // ALWAYS ADD BIG LIST AT THE BOTTOM
-            IgnoredFriendRequests
-        }, Formatting.Indented);
-        File.WriteAllText(filePath, jsonData);
-    }
-
-    public static void LoadData()
-    {
-        if (File.Exists(filePath))
-        {
-            var jsonData = File.ReadAllText(filePath);
-            var data = JsonConvert.DeserializeAnonymousType(jsonData, new
-            {
-                AuthCookie = "",
-                twoFactorAuthCookie,
-                IgnoredFriendRequests = new List<string>(),
-                HypeRateID = "",
-                HypeRateSecretToken = "",
-                Bio = "",
-                VRChatOSCPort = 9000
-            });
-
-            AuthCookie = data.AuthCookie;
-            IgnoredFriendRequests = data.IgnoredFriendRequests;
-            HypeRateID = data.HypeRateID;
-            HypeRateSecretToken = data.HypeRateSecretToken;
-            twoFactorAuthCookie = data.twoFactorAuthCookie;
-            Bio = data.Bio;
-            VRChatOSCPort = data.VRChatOSCPort;
-
-            if (VRChatOSCPort == 0) VRChatOSCPort = 9000;
-            SaveData();
+            _instance = JsonConvert.DeserializeObject<Config>(File.ReadAllText("data.json"));
+            Console.WriteLine("Loaded Config");
+            _instance!.Save();
         }
         else
         {
-            AuthCookie = "";
-            IgnoredFriendRequests = new List<string>();
-            HypeRateID = "";
-            HypeRateSecretToken = "";
-            twoFactorAuthCookie = "";
-            Bio = "";
-            VRChatOSCPort = 9000;
-            SaveData();
+            Save();
+            Console.WriteLine("Created New Config");
         }
     }
+    public void Save()
+    {
+        File.WriteAllText("data.json", JsonConvert.SerializeObject(this, Formatting.Indented));
 
-    public static void AddUserToIgnored(string userId)
+        Console.WriteLine("Saved Config");
+    }
+
+    public static Config GetInstance()
+    {
+        if (_instance is null)
+            new Config().Load();
+        return _instance;
+    }
+
+    public void AddUserToIgnored(string userId)
     {
         IgnoredFriendRequests.Add(userId);
-        SaveData();
+        Save();
     }
 }

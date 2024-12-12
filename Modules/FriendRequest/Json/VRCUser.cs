@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
 /// <summary>
 /// VRCUser - Local User or known as you some feilds are only populated when sending api requests that changes
-/// something IE update bio... this also handles these cases so not everything is nuked when updateing users
+/// something IE update bio... this also handles these cases so not everything is nuked when updating users
 /// </summary>
 public class VRCUser
 {
