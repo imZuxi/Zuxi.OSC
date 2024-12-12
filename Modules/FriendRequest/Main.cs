@@ -17,18 +17,17 @@ public class FriendsMain
 
     public static bool Initialize()
     {
-        if (string.IsNullOrEmpty(Config.AuthCookie))
+       
+        Console.WriteLine("Ignored FriendRequest Count: " + Config.GetInstance().IgnoredFriendRequests.Count);
+        string AuthResponse = VRChatAPIClient.GetInstance().CheckAuthStatus();
+        if (AuthResponse.Contains("Missing Credentials") || AuthResponse.Contains("Requires Two-Factor Authentication"))
         {
-            throw new NullReferenceException("VRChat auth cookie value was null...");
+           if (!VRChatAPIClient.VRChatAuthenticationFlow.DoAuthFlow(VRChatAPIClient.GetInstance()))
+                throw new InvalidOperationException("Failed to Authenticate with VRChat... ");
         }
-        Console.WriteLine("AuthCookie: " + Config.AuthCookie);
+         
 
-        Console.WriteLine("Ignored FriendRequest Count: " + Config.IgnoredFriendRequests.Count);
-
-        if (VRChatAPIClient.GetInstance().CheckAuthStatus().Contains("Missing Credentials"))
-            throw new InvalidOperationException("Failed Auth Check With VRChat Check Auth Cookie");
-
-        _websocket = new WebsocketWrapper("wss://pipeline.vrchat.cloud/?authToken=" + Config.AuthCookie,
+        _websocket = new WebsocketWrapper("wss://pipeline.vrchat.cloud/?authToken=" + Config.GetInstance().AuthCookie,
             FriendRequestHandler.OnWebsocketRequest);
         _websocket.Reconnect();
 
