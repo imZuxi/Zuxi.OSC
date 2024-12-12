@@ -18,13 +18,15 @@ internal class ZuxiBioUpdate
 
     internal static void SendUpdate()
     {
+        if (string.IsNullOrEmpty(VRCUser.CurrentUser.Bio) || string.IsNullOrEmpty(Config.GetInstance().Bio))
+            return;
         var Update = new UserUpdate()
         {
             statusDescription = VRCUser.CurrentUser.StatusDescription,
             bioLinks = VRCUser.CurrentUser.BioLinks
         };
 
-        Update.bio = Config.Bio.Replace("{CURRENTFRIENDCOUNT}", VRCUser.CurrentUser.Friends.Count.ToString());
+        Update.bio = Config.GetInstance().Bio.Replace("{CURRENTFRIENDCOUNT}", VRCUser.CurrentUser.Friends.Count.ToString());
         var json = Newtonsoft.Json.JsonConvert.SerializeObject(Update);
         var VRChatAPIResponse = VRChatAPIClient.GetInstance().MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
 
