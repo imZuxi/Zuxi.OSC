@@ -28,12 +28,12 @@ internal class ZuxiBioUpdate
 
         Update.bio = Config.GetInstance().Bio.Replace("{CURRENTFRIENDCOUNT}", VRCUser.CurrentUser.Friends.Count.ToString());
         var json = Newtonsoft.Json.JsonConvert.SerializeObject(Update);
-        var VRChatAPIResponse = VRChatAPIClient.GetInstance().MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
+        var LocalApiUser = VRChatAPIClient.GetInstance().MakeAPIPutRequest("users/" + VRCUser.CurrentUser.Id, json);
 
-        if (VRChatAPIResponse != "[]")
+        if (LocalApiUser != "[]")
         {
             // Recreate the Local User
-            new VRCUser(VRChatAPIResponse);
+            var vrcUser = new VRCUser(LocalApiUser);
             Console.WriteLine("Bio Updated! ");
         }
     }

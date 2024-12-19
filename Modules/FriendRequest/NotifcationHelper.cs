@@ -13,6 +13,7 @@ namespace Zuxi.OSC.Modules.FriendRequests;
 
 internal class Messages
 {
+    // TODO: rewrite this to be able to handle more request types instead of just blindly assuming this is a friend request
     public static friendRequest DesteralizeMessageAsFriendRequest(string jsonString)
     {
         var notificationMessage = JsonConvert.DeserializeObject<NotificationMessage>(jsonString);

@@ -13,7 +13,7 @@ using static Zuxi.OSC.Modules.FriendRequest.Json.VRCUser;
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
 
 /// <summary>
-/// VRCPlayer for non local user can be friend or non friend however some will not be populated for non friend
+/// VRCPlayer for non-local user can be friend or non friend however some will not be populated for non friend
 /// </summary>
 public class VRCPlayer
 {
@@ -21,13 +21,12 @@ public class VRCPlayer
     // @note i will update periodically
 
    public VRCPlayer(string user)
-    {
+   {
        JsonConvert.PopulateObject(user, this);
-        
-    }
+   }
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-  
+
     public bool AllowAvatarCopying { get; set; }
     public string Bio { get; set; }
     public List<string> BioLinks { get; set; }

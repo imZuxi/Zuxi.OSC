@@ -13,16 +13,16 @@ namespace Zuxi.OSC.utility;
 public class Config
 {
     private static Config? _instance;
-   
-    public string AuthCookie { get; set; }
-    public string twoFactorAuthCookie { get; set; }
-    public List<string> IgnoredFriendRequests { get; set; }
+
+    public string AuthCookie { get; set; } = ""; 
+    public string twoFactorAuthCookie { get; set; } = "";
+    public List<string> IgnoredFriendRequests { get; set; } = new List<string>();
 
     private readonly string filePath = "data.json"; // Change the file path as needed
-    public string HypeRateID { get; set; }
-    public string HypeRateSecretToken { get; set; }
-    public string Bio { get; set; }
-    public string VRCAuthValue { get; set; }
+    public string HypeRateID { get; set; } = "";
+    public string HypeRateSecretToken { get; set; } = "";
+    public string Bio { get; set; } = ""; 
+    public string VRCAuthValue { get; set; } = "";
     public int VRChatOSCPort { get; set; } = 9000;
 
     internal void Load()

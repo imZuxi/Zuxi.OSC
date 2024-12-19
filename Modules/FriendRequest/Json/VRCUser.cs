@@ -6,6 +6,7 @@
 //  *
 //  */
 
+//Resharper Disable All :: this is a user class so it should be treated as such.
 using Newtonsoft.Json;
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
@@ -16,19 +17,15 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json;
 public class VRCUser
 {
     // Hopefully this is a complete VRCLocal User i will update as vrchat updates...
-
-
-#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
-    public static VRCUser CurrentUser;
-
+    public static VRCUser? CurrentUser;
     public VRCUser(string user)
     {
        if (CurrentUser != null)
-        {
-            JsonConvert.PopulateObject(JsonConvert.SerializeObject(CurrentUser), this);
-        }
-        JsonConvert.PopulateObject(user, this);
-        CurrentUser = this;
+       {
+           JsonConvert.PopulateObject(JsonConvert.SerializeObject(CurrentUser), this);
+       }
+       JsonConvert.PopulateObject(user, this);
+       CurrentUser = this;
     }
 
     public int AcceptedTOSVersion { get; set; }
@@ -81,12 +78,12 @@ public class VRCUser
     public DateTime UpdatedAt { get; set; }
     public string UserIcon { get; set; }
 
-  
+
     public List<Badge> Badges { get; set; }
     public string Pronouns { get; set; }
     public List<string> CurrentAvatarTags { get; set; }
-    public object LastMobile { get; set; } 
-    public string ProfilePicOverrideThumbnail { get; set; } 
+    public object LastMobile { get; set; }
+    public string ProfilePicOverrideThumbnail { get; set; }
 
     public class DisplayNameEntry
     {

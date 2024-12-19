@@ -50,7 +50,7 @@ namespace Zuxi.OSC.Modules
             return null;
         }
 
-        private static string[] BlacklistedWindows =
+        private static readonly string[] BlacklistedWindows =
             { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass" };
 
         private static void GetLastIndex(string input, char replace, out string output)
@@ -58,9 +58,9 @@ namespace Zuxi.OSC.Modules
             output = input.Split(replace).Last().Trim();
         }
 
-        public static void GetFirstIndex(string input, char replace, out string output)
+        private static void GetFirstIndex(string input, char splittingChar, out string output)
         {
-            output = input.Split(replace).First().Trim();
+            output = input.Split(splittingChar).First().Trim();
         }
         private static void Replace(string input, string oldvalue, string newvalue, out string output)
         {

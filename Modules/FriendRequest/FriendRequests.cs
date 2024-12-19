@@ -28,12 +28,14 @@ internal class FriendRequestHandler
 
     public static void OnWebsocketRequest(string data)
     {
+        // Todo: mark all api responses here as a basic to keep up with them
         var wsNotification = WSNotification.FromJson(data);
+
         if (wsNotification.Type == "notification")
             if (wsNotification.Content.Contains("friendRequest"))
             {
-                var a = friendRequest.DecodeJson("[" + wsNotification.Content + "]")[0];
-                AcceptRequest(a);
+                var wsfriendRequest = friendRequest.DecodeJson("[" + wsNotification.Content + "]")[0];
+                AcceptRequest(wsfriendRequest);
             }
 
         if (wsNotification.Type == "friend-add")
@@ -42,9 +44,8 @@ internal class FriendRequestHandler
             if (VRCUser.CurrentUser.Friends.Contains(websocketFriend.id))
                 return;
 
-            Console.WriteLine("Display Name: " + websocketFriend.user.displayName);
+            Console.WriteLine("Display Name: {0} Id: {1}", websocketFriend.user.displayName, websocketFriend.id);
             VRCUser.CurrentUser.Friends.Add(websocketFriend.id);
-            Console.WriteLine(websocketFriend.id);
 
             Console.Title =
                 $"Current User {VRCUser.CurrentUser.DisplayName} | Friend Count {VRCUser.CurrentUser.Friends.Count}";
@@ -60,7 +61,7 @@ internal class FriendRequestHandler
             if (!VRCUser.CurrentUser.Friends.Contains(wf.id))
                 return;
             var vrcUser = VRChatAPIClient.GetInstance().GetVRCUserByID(wf.id);
-            Console.WriteLine($"{vrcUser.DisplayName} Removed you as a friend!");
+            Console.WriteLine("{0} Removed you as a friend!", vrcUser.DisplayName);
         }
     }
 
@@ -102,7 +103,7 @@ internal class FriendRequestHandler
             Console.ForegroundColor = ConsoleColor.Red;
             Config.GetInstance().AddUserToIgnored(vrcUser.Id);
             Console.WriteLine(
-                "Skipping Accepting Friend Request from user {0} Because there account is still a visiter",
+                "Skipping Accepting Friend Request from user {0} Because there account is still a visitor",
                 item.SenderUsername);
 
             Console.ForegroundColor = ConsoleColor.Cyan;

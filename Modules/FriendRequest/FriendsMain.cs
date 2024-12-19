@@ -19,8 +19,8 @@ public class FriendsMain
     {
        
         Console.WriteLine("Ignored FriendRequest Count: " + Config.GetInstance().IgnoredFriendRequests.Count);
-        string AuthResponse = VRChatAPIClient.GetInstance().CheckAuthStatus();
-        if (AuthResponse.Contains("Missing Credentials") || AuthResponse.Contains("Requires Two-Factor Authentication"))
+        string authResponse = VRChatAPIClient.GetInstance().CheckAuthStatus();
+        if (authResponse.Contains("Missing Credentials") || authResponse.Contains("Requires Two-Factor Authentication"))
         {
            if (!VRChatAPIClient.VRChatAuthenticationFlow.DoAuthFlow(VRChatAPIClient.GetInstance()))
                 throw new InvalidOperationException("Failed to Authenticate with VRChat... ");
