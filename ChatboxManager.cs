@@ -103,10 +103,16 @@ internal class ChatboxManager
 
             #endregion
         }
-
-        var FileText = File.ReadAllText(Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
-        if (!string.IsNullOrEmpty(FileText))
-            ChatboxText += "\v\v" + FileText.Replace("{{env.newline}}", "\v");
+        try
+        {
+            var FileText = File.ReadAllText(Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
+            if (!string.IsNullOrEmpty(FileText))
+                ChatboxText += "\v\v" + FileText.Replace("{{env.newline}}", "\v");
+        }
+        catch (FileNotFoundException)
+        {
+           File.Create(Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt")).Close();
+        }
         SendToChatBox(ChatboxText);
     }
 
