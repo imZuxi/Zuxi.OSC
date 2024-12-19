@@ -199,7 +199,14 @@ internal class VRChatAPIClient
             try
             {
                 // Wait for other modules to initialize.
-                Task.Delay(5000).Wait();
+                 
+               // Clear previous AuthCookie.
+                if (APIClient.httpClientHandler.CookieContainer != null)
+                {
+                    Uri baseUri = new Uri("https://api.vrchat.cloud"); // Replace with the base URI of your API
+                    APIClient.httpClientHandler.CookieContainer.SetCookies(baseUri, "auth=; expires=Thu, 01 Jan 1970 00:00:00 GMT");
+                    Console.WriteLine("Cleared the 'auth' cookie.");
+                }
 
                 string authValue = Config.GetInstance().VRCAuthValue;
                 Console.WriteLine(authValue ?? "No saved authentication value found.");
@@ -219,7 +226,8 @@ internal class VRChatAPIClient
                 if (response.IsSuccessStatusCode)
                 {
                     string vrcResponse = response.Content.ReadAsStringAsync().Result;
-                    Console.WriteLine(vrcResponse);
+                    if (vrcResponse.Length < 60) // can output user data also so best to avoid printing to console
+                        Console.WriteLine(vrcResponse);
 
                     if (vrcResponse.Contains("requiresTwoFactorAuth") && string.IsNullOrEmpty(Config.GetInstance().twoFactorAuthCookie))
                     {
@@ -295,12 +303,18 @@ internal class VRChatAPIClient
         /// <param name="APIClient">The VRChat API client. <see cref="VRChatAPIClient"/></param>
         public static void SaveCreds(VRChatAPIClient APIClient)
         {
+
+            string TempCookie = Config.GetInstance().AuthCookie; // store temperally for when your cookie expires we do not resave it. @note dotnet is weird i though the cookie should of been ignored but whatever
+
+
+            Config.GetInstance().AuthCookie = "";
+            Config.GetInstance().twoFactorAuthCookie = "";
             Uri vrChatUri = new Uri("https://api.vrchat.cloud");
             CookieCollection cookies = APIClient.httpClientHandler.CookieContainer.GetCookies(vrChatUri);
 
             foreach (Cookie cookie in cookies)
             {
-                if (cookie.Name == "auth" && !string.IsNullOrEmpty(cookie.Value))
+                if (cookie.Name == "auth" && !string.IsNullOrEmpty(cookie.Value) && cookie.Value != TempCookie)
                     Config.GetInstance().AuthCookie = cookie.Value;
 
                 if (cookie.Name == "twoFactorAuth" && !string.IsNullOrEmpty(cookie.Value))
