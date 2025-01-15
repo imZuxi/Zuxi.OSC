@@ -80,7 +80,7 @@ internal class ChatboxManager
                 var ProgramWindow = ActiveWindow.Get();
 
                 if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) &&
-                    Console.Title != ProgramWindow && ProgramWindow.Contains(currentSong.Split('-').FirstOrDefault()))
+                    Console.Title != ProgramWindow && !ProgramWindow.Contains(currentSong.Split('-').FirstOrDefault()))
                 {
                     if (!string.IsNullOrEmpty(currentSong)) ChatboxText += "\v";
                     ChatboxText += $"[ Current Window ]: \v {ProgramWindow}";

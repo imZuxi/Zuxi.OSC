@@ -52,7 +52,7 @@ internal class VRChatAPIClient
         { Domain = "api.vrchat.cloud", Path = "/" });
         httpClientHandler.CookieContainer.Add(new Cookie("twoFactorAuth", Config.GetInstance().twoFactorAuthCookie)
         { Domain = "api.vrchat.cloud", Path = "/" });
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com");
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com"); 
         _httpClient.BaseAddress = new Uri(_VRChatBaseEndpoint);
         VrChatApiClient = this;
     }

@@ -75,7 +75,7 @@ internal class MediaPlayback
     internal static string getProgressVisual()
     {
         var percentage = GetPlaybackProgress();
-        if (LastPlayBackPercentage == percentage) return "";
+      //  if (LastPlayBackPercentage == percentage) return "";
 
         LastPlayBackPercentage = percentage;
         var progressPercentage = progress_resolution * percentage;
