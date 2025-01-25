@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
+using Newtonsoft.Json.Linq;
 using Zuxi.OSC.Modules.FriendRequest.Json;
 using Zuxi.OSC.utility;
 
@@ -52,7 +53,7 @@ internal class VRChatAPIClient
         { Domain = "api.vrchat.cloud", Path = "/" });
         httpClientHandler.CookieContainer.Add(new Cookie("twoFactorAuth", Config.GetInstance().twoFactorAuthCookie)
         { Domain = "api.vrchat.cloud", Path = "/" });
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com"); 
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com");
         _httpClient.BaseAddress = new Uri(_VRChatBaseEndpoint);
         VrChatApiClient = this;
     }
@@ -74,7 +75,10 @@ internal class VRChatAPIClient
     /// <returns>A JSON string indicating the authentication status.</returns>
     public string CheckAuthStatus()
     {
-        return MakeAPIGetRequest("auth");
+        if (!VRChatAuthenticationFlow.Is2FactorAuthExpired())
+            return MakeAPIGetRequest("auth");
+        return "Requires Two-Factor Authentication";  // this just is a alert that will get passed to the caller FriendsMain.Initialize(); to trigger VRChatAuthenticationFlow.DoAuthFlow(VRChatAPIClient);
+        // iirc i should really do the authflow automatically here but we.
     }
 
     /// <summary>
@@ -180,15 +184,16 @@ internal class VRChatAPIClient
         return "[]";
     }
 
-    // Note: This class is intentionally separate and only references VRChatAPIClient as a parameter to set the VRChatAPIClient Auth Values. 
-    // It is meant exclusively for authentication and its flow. Use this method only when logging in 
+    // Note: This class is intentionally separate and only references VRChatAPIClient as a parameter to set the VRChatAPIClient Auth Values.
+    // It is meant exclusively for authentication and its flow. Use this method only when logging in
     // without an auth cookie. However, for better security and reliability, always use an auth cookie when possible. - Zuxi
 
     /// <summary>
-    /// Handles the authentication flow for VRChat, including basic and two-factor authentication. 
+    /// Handles the authentication flow for VRChat, including basic and two-factor authentication.
     /// </summary>
     public class VRChatAuthenticationFlow
     {
+
         /// <summary>
         /// Executes the authentication flow for the VRChat API client.
         /// </summary>
@@ -198,9 +203,6 @@ internal class VRChatAPIClient
         {
             try
             {
-                // Wait for other modules to initialize.
-                 
-               // Clear previous AuthCookie.
                 if (APIClient.httpClientHandler.CookieContainer != null)
                 {
                     Uri baseUri = new Uri("https://api.vrchat.cloud"); // Replace with the base URI of your API
@@ -229,7 +231,7 @@ internal class VRChatAPIClient
                     if (vrcResponse.Length < 60) // can output user data also so best to avoid printing to console
                         Console.WriteLine(vrcResponse);
 
-                    if (vrcResponse.Contains("requiresTwoFactorAuth") && string.IsNullOrEmpty(Config.GetInstance().twoFactorAuthCookie))
+                    if (vrcResponse.Contains("requiresTwoFactorAuth") || string.IsNullOrEmpty(Config.GetInstance().twoFactorAuthCookie))
                     {
                         if (!DoTwoFactorFlow(APIClient))
                         {
@@ -303,10 +305,7 @@ internal class VRChatAPIClient
         /// <param name="APIClient">The VRChat API client. <see cref="VRChatAPIClient"/></param>
         public static void SaveCreds(VRChatAPIClient APIClient)
         {
-
-            string TempCookie = Config.GetInstance().AuthCookie; // store temperally for when your cookie expires we do not resave it. @note dotnet is weird i though the cookie should of been ignored but whatever
-
-
+            string TempCookie = Config.GetInstance().AuthCookie; // store temporally for when your cookie expires we do not resave it. @note dotnet is weird i thought the cookie should have been ignored but whatever
             Config.GetInstance().AuthCookie = "";
             Config.GetInstance().twoFactorAuthCookie = "";
             Uri vrChatUri = new Uri("https://api.vrchat.cloud");
@@ -333,7 +332,6 @@ internal class VRChatAPIClient
         public static string GetAuthString()
         {
             string username, password;
-
             do
             {
                 Console.WriteLine("Please enter your VRChat username:");
@@ -361,6 +359,37 @@ internal class VRChatAPIClient
                 Console.WriteLine("Invalid username or password. Please restart to retry the setup.");
             }
         }
+
+        /// <summary>
+        /// Checks if the stored two-factor authentication (2FA) token has expired.
+        /// </summary>
+        /// <returns>
+        /// Returns <c>true</c> if the token is expired or invalid, otherwise <c>false</c>.
+        /// </returns>
+        internal static bool Is2FactorAuthExpired()
+        {
+            // {"userId":"usr_b70bbafe-f48e-4011-bb47-57827f332bf5","macAddress":"","timestamp":1737782424053,"version":1,"iat":1737782424,"exp":1740374424,"aud":"VRChatTwoFactorAuth","iss":"VRChat"};
+            if (string.IsNullOrEmpty(Config.GetInstance().twoFactorAuthCookie))
+                return true;
+            string data = Config.GetInstance().twoFactorAuthCookie.Split('.')[1];
+            // Fix Base64 padding (JWT uses Base64Url encoding)
+            data = data.Replace('-', '+').Replace('_', '/');
+            switch (data.Length % 4)
+            {
+                case 2: data += "=="; break;
+                case 3: data += "="; break;
+            }
+            string json = Encoding.UTF8.GetString(Convert.FromBase64String(data));
+            long exp = JObject.Parse(json)["exp"]!.Value<long>();
+            long epochSeconds = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+            if (epochSeconds > exp)
+            {
+                Config.GetInstance().twoFactorAuthCookie = "";
+                return true;
+            }
+            return false;
+        }
+
     }
 
 }
