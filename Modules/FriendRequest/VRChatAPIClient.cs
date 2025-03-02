@@ -73,7 +73,7 @@ internal class VRChatAPIClient
     /// <returns>A JSON string indicating the authentication status.</returns>
     public string CheckAuthStatus()
     {
-        if (!VRChatAuthenticationFlow.Is2FactorAuthExpired())
+      //  if (!VRChatAuthenticationFlow.Is2FactorAuthExpired())
             return MakeAPIGetRequest("auth");
         return "Requires Two-Factor Authentication";  // this just is a alert that will get passed to the caller FriendsMain.Initialize(); to trigger VRChatAuthenticationFlow.DoAuthFlow(VRChatAPIClient);
         // iirc i should really do the authflow automatically here but we.
@@ -202,7 +202,7 @@ internal class VRChatAPIClient
             {
                 if (APIClient.httpClientHandler.CookieContainer != null)
                 {
-                    Uri baseUri = new Uri("https://api.vrchat.cloud"); // Replace with the base URI of your API
+                    Uri baseUri = new Uri("https://api.vrchat.cloud");
                     APIClient.httpClientHandler.CookieContainer.SetCookies(baseUri, "auth=; expires=Thu, 01 Jan 1970 00:00:00 GMT");
                     Console.WriteLine("Cleared the 'auth' cookie.");
                 }
