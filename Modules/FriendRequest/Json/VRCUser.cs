@@ -20,14 +20,21 @@ public class VRCUser
     public static VRCUser? CurrentUser;
     public VRCUser(string user)
     {
-       if (CurrentUser != null)
-       {
-           JsonConvert.PopulateObject(JsonConvert.SerializeObject(CurrentUser), this);
-       }
-       JsonConvert.PopulateObject(user, this);
-       CurrentUser = this;
-    }
+        HashSet<string> existingFriends = CurrentUser?.Friends != null ? new HashSet<string>(CurrentUser.Friends) : new HashSet<string>();
 
+        if (CurrentUser != null)
+        {
+            JsonConvert.PopulateObject(JsonConvert.SerializeObject(CurrentUser), this);
+        }
+        JsonConvert.PopulateObject(user, this);
+        if (Friends != null)
+        {
+            existingFriends.UnionWith(Friends);
+            Friends = existingFriends.ToList();
+        }
+
+        CurrentUser = this;
+    }
     public int AcceptedTOSVersion { get; set; }
     public int AcceptedPrivacyVersion { get; set; }
     public DateTime? AccountDeletionDate { get; set; }

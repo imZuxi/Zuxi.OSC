@@ -28,7 +28,6 @@ namespace Zuxi.OSC.Modules.FriendRequests;
 /// notifications, and other API functionalities.
 /// </summary>
 
-
 internal class VRChatAPIClient
 {
     private static VRChatAPIClient VrChatApiClient { get; set; }
@@ -53,7 +52,7 @@ internal class VRChatAPIClient
         { Domain = "api.vrchat.cloud", Path = "/" });
         httpClientHandler.CookieContainer.Add(new Cookie("twoFactorAuth", Config.GetInstance().twoFactorAuthCookie)
         { Domain = "api.vrchat.cloud", Path = "/" });
-        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("ZuxiJapi%2F4.0.0%20vrchat%40mail.imzuxi.com");
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("Zuxi.OSC%2F4.1.3%20vrchat%40mail.imzuxi.com");
         _httpClient.BaseAddress = new Uri(_VRChatBaseEndpoint);
         VrChatApiClient = this;
     }
@@ -65,7 +64,6 @@ internal class VRChatAPIClient
     internal static VRChatAPIClient GetInstance()
     {
         if (VrChatApiClient is null) VrChatApiClient = new VRChatAPIClient();
-
         return VrChatApiClient;
     }
 
@@ -180,7 +178,6 @@ internal class VRChatAPIClient
             Console.WriteLine("Response content: " + content);
             Console.ForegroundColor = ConsoleColor.Cyan;
         }
-
         return "[]";
     }
 
@@ -211,16 +208,12 @@ internal class VRChatAPIClient
                 }
 
                 string authValue = Config.GetInstance().VRCAuthValue;
-                Console.WriteLine(authValue ?? "No saved authentication value found.");
-
                 if (string.IsNullOrEmpty(authValue))
                 {
-                    Console.WriteLine("No auth token found. Starting the authentication flow...");
+                    Console.WriteLine("No saved authentication value found. Starting the authentication flow...");
                     authValue = GetAuthString();
                 }
-
                 APIClient._httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authValue);
-
                 // Authenticate and retrieve the local user.
                 Console.WriteLine("Authenticating...");
                 var response = APIClient._httpClient.GetAsync("auth/user").Result;
@@ -230,7 +223,6 @@ internal class VRChatAPIClient
                     string vrcResponse = response.Content.ReadAsStringAsync().Result;
                     if (vrcResponse.Length < 60) // can output user data also so best to avoid printing to console
                         Console.WriteLine(vrcResponse);
-
                     if (vrcResponse.Contains("requiresTwoFactorAuth") || string.IsNullOrEmpty(Config.GetInstance().twoFactorAuthCookie))
                     {
                         if (!DoTwoFactorFlow(APIClient))
@@ -239,7 +231,6 @@ internal class VRChatAPIClient
                             return false;
                         }
                     }
-
                     Console.WriteLine("Authentication successful!");
                     APIClient._httpClient.DefaultRequestHeaders.Authorization = null;
                     Config.GetInstance().VRCAuthValue = authValue;
@@ -340,7 +331,6 @@ internal class VRChatAPIClient
                 Console.WriteLine("Please enter your VRChat password:");
                 password = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password));
-
             return Convert.ToBase64String(Encoding.ASCII.GetBytes($"{username}:{password}"));
         }
 
