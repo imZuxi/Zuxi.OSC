@@ -61,7 +61,7 @@ internal class ChatboxManager
         {
             if (!Program.NormalChatbox) ChatboxText += "imzuxi.com";
         }
-
+        bool isSendingMusic = false;
         if (Program.NormalChatbox)
         {
             var currentSong = MediaPlayback.GetCurrentSong();
@@ -73,19 +73,25 @@ internal class ChatboxManager
 
                if (!IsInVR)
                     ChatboxText += $"\v{MediaPlayback.getProgressVisual()}";
+                isSendingMusic = true;
             }
 
             if (!IsInVR)
             {
                 var ProgramWindow = ActiveWindow.Get();
 
-                if (!string.IsNullOrEmpty(ProgramWindow) && !currentSong.Contains(ProgramWindow) &&
-                    Console.Title != ProgramWindow && !ProgramWindow.Contains(currentSong.Split('-').FirstOrDefault()))
+                if (!string.IsNullOrEmpty(ProgramWindow) &&
+                    (string.IsNullOrEmpty(currentSong) || (!currentSong.Contains(ProgramWindow) &&
+                                                           Console.Title != ProgramWindow &&
+                                                           !ProgramWindow.Contains(currentSong.Split('-').FirstOrDefault()))))
                 {
-                    if (!string.IsNullOrEmpty(currentSong)) ChatboxText += "\v";
+                    if (!string.IsNullOrEmpty(currentSong))
+                        ChatboxText += "\v";
+
                     ChatboxText += $"[ Current Window ]: \v {ProgramWindow}";
                 }
             }
+
 
             #region Broken Will NOT Fix
 
@@ -107,7 +113,11 @@ internal class ChatboxManager
         {
             var FileText = File.ReadAllText(Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt"));
             if (!string.IsNullOrEmpty(FileText))
-                ChatboxText += "\v\v" + FileText.Replace("{{env.newline}}", "\v");
+            {
+                if (isSendingMusic)
+                ChatboxText += "\v";
+                ChatboxText += FileText.Replace("{{env.newline}}", "\v");
+            }
         }
         catch (FileNotFoundException)
         {
