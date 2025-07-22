@@ -6,6 +6,7 @@
 //  *
 //  */
 
+using System.Collections.Concurrent;
 using BuildSoft.VRChat.Osc.Chatbox;
 using Zuxi.OSC.HeartRate;
 using Zuxi.OSC.Modules;
@@ -15,7 +16,9 @@ namespace Zuxi.OSC;
 
 internal class ChatboxManager
 {
-    internal static readonly List<string> ChatboxQue = new();
+   // internal static readonly List<string> ChatboxQue = new();
+
+    internal static readonly ConcurrentQueue<string> ChatboxQue = new();
     private static string _lastSong = "";
 
     public static void SendToChatBox(string chatboxText, bool bypass = false)
@@ -25,26 +28,19 @@ internal class ChatboxManager
             // Bail Early no update saves VRChat Chat box from throwing a spam error
             return;
         }
-
-        // This is to Debug the Chatbox however its not needed in release but since i un in debug mode more often then not id rather comment this out
-
-        // Console.WriteLine(chatboxText);
         OscChatbox.SendMessage(chatboxText.Trim(), true);
     }
 
 
     public static void UpdateChatboxFunc()
     {
-        if (ChatboxQue.Count > 0)
+        if (ChatboxQue.TryDequeue(out string? message))
         {
-            SendToChatBox(ChatboxQue[0]);
-            // OBSHook64.dll (Real)
-            // File.WriteAllText(Path.Combine(FileUtils.GetAppFolder(), "OBSOUT.txt"), ChatboxQue[0]);
-            ChatboxQue.RemoveAt(0);
+            SendToChatBox(message);
             return;
         }
 
-        var ChatboxText = "";
+        var chatboxText = "";
 
         if (Program.NormalChatbox)
         {
@@ -55,12 +51,9 @@ internal class ChatboxManager
         if (Program.HeartRate)
         {
             if (HeartBeat.Lasthr != 0)
-                ChatboxText += $"{HeartBeat.Lasthr}❤️\v";
+                chatboxText += $"{HeartBeat.Lasthr}❤️\v";
         }
-        else
-        {
-            if (!Program.NormalChatbox) ChatboxText += "imzuxi.com";
-        }
+
         bool isSendingMusic = false;
         if (Program.NormalChatbox)
         {
@@ -69,11 +62,11 @@ internal class ChatboxManager
             {
                 if (IsInVR)
                     _lastSong = currentSong;
-                ChatboxText += $"[ Current Song ] \v {currentSong}";
+                chatboxText += $"[ Current Song ] \v {currentSong}";
 
                if (!IsInVR)
-                    ChatboxText += $"\v{MediaPlayback.getProgressVisual()}";
-                isSendingMusic = true;
+                    chatboxText += $"\v{MediaPlayback.getProgressVisual()}";
+               isSendingMusic = true;
             }
 
             if (!IsInVR)
@@ -86,12 +79,10 @@ internal class ChatboxManager
                                                            !ProgramWindow.Contains(currentSong.Split('-').FirstOrDefault()))))
                 {
                     if (!string.IsNullOrEmpty(currentSong))
-                        ChatboxText += "\v";
-
-                    ChatboxText += $"[ Current Window ]: \v {ProgramWindow}";
+                        chatboxText += "\v";
+                    chatboxText += $"[ Current Window ]: \v {ProgramWindow}";
                 }
             }
-
 
             #region Broken Will NOT Fix
 
@@ -115,20 +106,20 @@ internal class ChatboxManager
             if (!string.IsNullOrEmpty(FileText))
             {
                 if (isSendingMusic)
-                ChatboxText += "\v";
-                ChatboxText += FileText.Replace("{{env.newline}}", "\v");
+                    chatboxText += "\v";
+                chatboxText += FileText.Replace("{{env.newline}}", "\v");
             }
         }
         catch (FileNotFoundException)
         {
            File.Create(Path.Combine(FileUtils.GetAppFolder(), "chatbox.txt")).Close();
         }
-        SendToChatBox(ChatboxText);
+        SendToChatBox(chatboxText);
     }
 
-    public static void AddNewMessageToChatboxQue(string data)
+    public static void AddNewMessageToChatboxQue(string message)
     {
-        ChatboxQue.Add(data);
+        ChatboxQue.Enqueue(message);
     }
 
     #region Timer Loop to Update Chatbox
