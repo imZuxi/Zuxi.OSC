@@ -36,7 +36,7 @@ namespace Zuxi.OSC.Modules
                     if (WindowName == "Cider") return "Apple Music";
 
                     GetLastIndex(WindowName, '\\', out WindowName);
-                    if (WindowName.Contains("Chrome") || WindowName.Contains("FireFox"))
+                    if (WindowName.Contains("Chrome") || WindowName.Contains("FireFox") || WindowName.Contains("Waterfox"))
                         GetLastIndex(WindowName, '-', out WindowName);
                     if (WindowName.Contains("Brave"))
                         GetFirstIndex(WindowName, '-', out WindowName);
@@ -46,12 +46,11 @@ namespace Zuxi.OSC.Modules
                     return WindowName.Trim();
                 }
             }
-
-            return null;
+            return "";
         }
 
         private static readonly string[] BlacklistedWindows =
-            { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass" };
+            { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass", "Spotify Free" };
 
         private static void GetLastIndex(string input, char replace, out string output)
         {
@@ -62,6 +61,7 @@ namespace Zuxi.OSC.Modules
         {
             output = input.Split(splittingChar).First().Trim();
         }
+
         private static void Replace(string input, string oldvalue, string newvalue, out string output)
         {
             output = input.Replace(oldvalue, newvalue);
