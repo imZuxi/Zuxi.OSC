@@ -17,8 +17,6 @@ public class Config
     public string AuthCookie { get; set; } = ""; 
     public string twoFactorAuthCookie { get; set; } = "";
     public List<string> IgnoredFriendRequests { get; set; } = new List<string>();
-
-    private readonly string filePath = "data.json"; // Change the file path as needed
     public string HypeRateID { get; set; } = "";
     public string HypeRateSecretToken { get; set; } = "";
     public string Bio { get; set; } = ""; 
@@ -42,7 +40,6 @@ public class Config
     public void Save()
     {
         File.WriteAllText("data.json", JsonConvert.SerializeObject(this, Formatting.Indented));
-
         Console.WriteLine("Saved Config");
     }
 
@@ -50,7 +47,7 @@ public class Config
     {
         if (_instance is null)
             new Config().Load();
-        return _instance;
+        return _instance!;
     }
 
     public void AddUserToIgnored(string userId)

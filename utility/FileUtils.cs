@@ -13,7 +13,6 @@ internal class FileUtils
     public static string GetAppFolder()
     {
         var text = Path.Combine(GetMainFolder(), "Apps", "Zuxi.OSC");
-
         var flag = !Directory.Exists(text);
         if (flag) Directory.CreateDirectory(text);
         return text;

@@ -62,7 +62,10 @@ internal class Program
             ChatboxManager.AddNewMessageToChatboxQue("Hello World! OSC Ready...");
             ChatboxManager.Start();
             // Completely Safe to init on main thread
-           FriendsMain.Initialize();
+            if (FriendsMain.Initialize())
+            {
+                Console.WriteLine("Friends Request Module Initialized!");
+            }
 
             while (true)
             {

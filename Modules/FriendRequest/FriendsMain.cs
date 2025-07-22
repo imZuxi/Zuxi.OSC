@@ -30,11 +30,9 @@ public class FriendsMain
 
         if (authResponse.Contains("Missing Credentials") || authResponse.Contains("Requires Two-Factor Authentication"))
         {
-          
            if (!VRChatAPIClient.VRChatAuthenticationFlow.DoAuthFlow(VRChatAPIClient.GetInstance()))
                 throw new InvalidOperationException("Failed to Authenticate with VRChat... ");
         }
-
 
         _websocket = new WebsocketWrapper("wss://pipeline.vrchat.cloud/?authToken=" + Config.GetInstance().AuthCookie,
             FriendRequestHandler.OnWebsocketRequest);
@@ -51,7 +49,6 @@ public class FriendsMain
             VRCUser.CurrentUser.Friends.Count));
 
         FriendRequestHandler.FetchVrChatRequestsAndAcceptAll();
-
         return true;
     }
 }
