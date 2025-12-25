@@ -72,7 +72,7 @@ internal class ChatboxManager
             if (!IsInVR)
             {
                 var ProgramWindow = ActiveWindow.Get();
-
+               // Console.WriteLine(ProgramWindow);
                 if (!string.IsNullOrEmpty(ProgramWindow) &&
                     (string.IsNullOrEmpty(currentSong) || (!currentSong.Contains(ProgramWindow) &&
                                                            Console.Title != ProgramWindow &&

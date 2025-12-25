@@ -22,7 +22,7 @@ public class Config
     public string Bio { get; set; } = ""; 
     public string VRCAuthValue { get; set; } = "";
     public int VRChatOSCPort { get; set; } = 9000;
-
+    public bool shouldAcceptPreviousRequests { get; set; } = true; 
     internal void Load()
     {
         if (File.Exists("data.json"))

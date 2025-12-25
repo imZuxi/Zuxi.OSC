@@ -30,8 +30,22 @@ namespace Zuxi.OSC.Modules
 
                 if (GetWindowText(hWnd, title, nChars) > 0)
                 {
-                    var WindowName = title.ToString();
+                    string WindowName = title.ToString();
+                    // Console.WriteLine(title);
+                    if (WindowName.Contains("Unity")) //AvatarSearch - VRCDefaultWorldScene - Windows, Mac, Linux - Unity 2022.3.22f1* <DX11>
+                    { 
+                        StringBuilder builder = new StringBuilder(nChars);
+
+                        GetFirstIndex(WindowName, '-', out WindowName);
+
+                        builder.Append(WindowName);
+
+                        builder.Append("- Unity!");
+                        return builder.ToString();
+
+                    }
                     if (BlacklistedWindows.Any(window => WindowName.ToLower().Contains(window.ToLower()))) return null;
+
 
                     if (WindowName == "Cider") return "Apple Music";
 

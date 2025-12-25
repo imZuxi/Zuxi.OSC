@@ -16,6 +16,9 @@ internal class FriendRequestHandler
 {
     public static void FetchVrChatRequestsAndAcceptAll()
     {
+        if (!Config.GetInstance().shouldAcceptPreviousRequests)
+            return;
+        
         Console.WriteLine("Fetching Friend Requests");
 
         var userNotifs = VRChatAPIClient.GetInstance().GetUserNotis();
