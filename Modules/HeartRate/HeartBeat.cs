@@ -28,9 +28,15 @@ public class HeartBeat
     public static void CreateHeartRate()
     {
         Id = Config.GetInstance().HypeRateID;
+        string _hyperRateToken = Config.GetInstance().HypeRateSecretToken.RemoveNonUtf8Chars();
+        if (string.IsNullOrEmpty( _hyperRateToken ) || string.IsNullOrEmpty( Id ))
+        {
+            Console.WriteLine("HypeRate not setup cannot connect!"); 
+            return; 
+        }
         Websocket = new WebsocketWrapper(HypeRateUri + Config.GetInstance().HypeRateSecretToken.RemoveNonUtf8Chars(),
             OnWsMessageReceived, OnWsConnected);
-        Websocket.Connect();
+        Websocket.Reconnect();
     }
 
     public static void OnWsConnected()
