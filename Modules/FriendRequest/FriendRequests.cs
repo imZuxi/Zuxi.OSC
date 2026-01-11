@@ -17,11 +17,14 @@ internal class FriendRequestHandler
     public static void FetchVrChatRequestsAndAcceptAll()
     {
         if (!Config.GetInstance().shouldAcceptPreviousRequests)
+        {
+            ZuxiBioUpdate.SendUpdate();
             return;
-        
+        }
+
         Console.WriteLine("Fetching Friend Requests");
 
-        var userNotifs = VRChatAPIClient.GetInstance().GetUserNotis();
+        var userNotifs = VRChatAPIClient.GetInstance().GetUserNotifications();
         List<friendRequest> friendRequests = friendRequest.DecodeJson(userNotifs);
 
         foreach (var friendRequest in friendRequests)
@@ -68,7 +71,6 @@ internal class FriendRequestHandler
         }
     }
 
-
     private static void AcceptRequest(friendRequest item)
     {
         if (Config.GetInstance().IgnoredFriendRequests.Contains(item.SenderUserId))
@@ -76,11 +78,10 @@ internal class FriendRequestHandler
             Console.WriteLine("ignoring Friend Request From " + item.SenderUserId);
             return;
         }
-
         var vrcUser = VRChatAPIClient.GetInstance().GetVRCUserByID(item.SenderUserId);
 
 
-        if (VRCUser.CurrentUser.Friends.Contains(vrcUser.Id))
+        if (VRCUser.CurrentUser!.Friends.Contains(vrcUser.Id))
             return;
 
         // Check if the account is more than 30 days old
@@ -92,14 +93,10 @@ internal class FriendRequestHandler
             if (!VRChatAPIClient.GetInstance().AcceptRequest(item.Id)) return;
             VRCUser.CurrentUser.Friends.Add(item.SenderUserId);
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Auto Accepted FriendRequest From {0} id {1} NotiID {2}", item.SenderUsername,
-                item.SenderUserId, item.Id);
+            Console.WriteLine("Auto Accepted FriendRequest From {0} id {1} notificationId {2}", item.SenderUsername, item.SenderUserId, item.Id);
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Title =
-                $"Current User {VRCUser.CurrentUser.DisplayName} | Friend Count {VRCUser.CurrentUser.Friends.Count}";
-
-            ChatboxManager.AddNewMessageToChatboxQue(
-                $"Hello {item.SenderUsername}\v Thanks for Becoming my Friend!\v I now have {VRCUser.CurrentUser.Friends.Count} Friends!");
+            Console.Title = $"Current User {VRCUser.CurrentUser.DisplayName} | Friend Count {VRCUser.CurrentUser.Friends.Count}";
+            ChatboxManager.AddNewMessageToChatboxQue($"Hello {item.SenderUsername}\v Thanks for Becoming my Friend!\v I now have {VRCUser.CurrentUser.Friends.Count} Friends!");
         }
         else
         {

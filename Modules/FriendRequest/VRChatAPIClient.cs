@@ -92,7 +92,7 @@ internal class VRChatAPIClient
     /// Retrieves notifications for the authenticated user from the VRChat API.
     /// </summary>
     /// <returns>A JSON string containing user notifications.</returns>
-    public string GetUserNotis()
+    public string GetUserNotifications()
     {
         return MakeAPIGetRequest("auth/user/notifications");
     }

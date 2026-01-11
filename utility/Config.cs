@@ -1,6 +1,6 @@
 ﻿// /*
 //  *
-//  * Zuxi.OSC - Config.GetInstance().cs
+//  * Zuxi.OSC - Config.cs
 //  * Copyright 2023 - 2024 Zuxi and contributors
 //  * https://zuxi.dev
 //  *
