@@ -45,6 +45,7 @@ public class FriendsMain
 
         Console.WriteLine("Current Friends: {0}", VRCUser.CurrentUser.Friends.Count);
 
+        VRChatAPIClient.GetInstance().GetVRCUserByID("usr_bb8c0354-4247-4389-b7c5-bad1b5f1aa15");
         ChatboxManager.AddNewMessageToChatboxQue(string.Format("Current Friends: {0}",
             VRCUser.CurrentUser.Friends.Count));
 

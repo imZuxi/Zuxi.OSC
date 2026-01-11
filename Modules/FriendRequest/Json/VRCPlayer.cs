@@ -1,13 +1,14 @@
 ﻿// /*
 //  *
 //  * Zuxi.OSC - VRCPlayer.cs
-//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * Copyright 2023 - 2025 Zuxi and contributors
 //  * https://zuxi.dev
 //  *
 //  */
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 using static Zuxi.OSC.Modules.FriendRequest.Json.VRCUser;
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
@@ -17,13 +18,16 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json;
 /// </summary>
 public class VRCPlayer
 {
-    // updated 12/09/24 7am
+    // updated 1/11/25 12:30pm
     // @note i will update periodically
 
-   public VRCPlayer(string user)
-   {
-       JsonConvert.PopulateObject(user, this);
-   }
+    public VRCPlayer(string user)
+    {
+        JsonConvert.PopulateObject(user, this);
+
+    }
+
+
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
 
@@ -44,8 +48,11 @@ public class VRCPlayer
     public string Id { get; set; }
     public string InstanceId { get; set; }
     public bool IsFriend { get; set; }
+    [JsonProperty("last_activity")]
     public string LastActivity { get; set; }
+    [JsonProperty("last_login")]
     public string LastLogin { get; set; }
+    [JsonProperty("last_platform")]
     public string LastPlatform { get; set; }
     public string Location { get; set; }
     public string Note { get; set; }
@@ -64,9 +71,10 @@ public class VRCPlayer
     public string Platform { get; set; }
     public string ProfilePicOverrideThumbnail { get; set; }
     public string Pronouns { get; set; }
-
+    public bool ageVerified { get; set; }
 
     public List<Badge> Badges { get; set; }
+    [JsonProperty("last_mobile")]
     public object LastMobile { get; set; }
 
     private class CustomDateFormatConverter : IsoDateTimeConverter

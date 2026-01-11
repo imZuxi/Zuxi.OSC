@@ -1,13 +1,14 @@
 ﻿// /*
 //  *
 //  * Zuxi.OSC - VRCUser.cs
-//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * Copyright 2023 - 2025 Zuxi and contributors
 //  * https://zuxi.dev
 //  *
 //  */
 
 //Resharper Disable All :: this is a user class so it should be treated as such.
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Zuxi.OSC.Modules.FriendRequest.Json;
 /// <summary>
@@ -32,9 +33,9 @@ public class VRCUser
             existingFriends.UnionWith(Friends);
             Friends = existingFriends.ToList();
         }
-
         CurrentUser = this;
     }
+
     public int AcceptedTOSVersion { get; set; }
     public int AcceptedPrivacyVersion { get; set; }
     public DateTime? AccountDeletionDate { get; set; }
@@ -46,6 +47,7 @@ public class VRCUser
     public string CurrentAvatarAssetUrl { get; set; }
     public string CurrentAvatarImageUrl { get; set; }
     public string CurrentAvatarThumbnailImageUrl { get; set; }
+    [JsonProperty("date_joined")]
     public DateTime DateJoined { get; set; }
     public string DeveloperType { get; set; }
     public string DisplayName { get; set; }
@@ -60,8 +62,11 @@ public class VRCUser
     public string HomeLocation { get; set; }
     public string Id { get; set; }
     public bool IsFriend { get; set; }
+    [JsonProperty("last_activity")]
     public DateTime LastActivity { get; set; }
+    [JsonProperty("last_login")]
     public DateTime LastLogin { get; set; }
+    [JsonProperty("last_platform")]
     public string LastPlatform { get; set; }
     public string ObfuscatedEmail { get; set; }
     public string ObfuscatedPendingEmail { get; set; }
@@ -82,15 +87,37 @@ public class VRCUser
     public bool TwoFactorAuthEnabled { get; set; }
     public DateTime TwoFactorAuthEnabledDate { get; set; }
     public bool Unsubscribe { get; set; }
+    [JsonProperty("updated_at")]
     public DateTime UpdatedAt { get; set; }
     public string UserIcon { get; set; }
-
-
     public List<Badge> Badges { get; set; }
     public string Pronouns { get; set; }
     public List<string> CurrentAvatarTags { get; set; }
+    [JsonProperty("last_mobile")]
     public object LastMobile { get; set; }
     public string ProfilePicOverrideThumbnail { get; set; }
+    [JsonProperty("platform_history")]
+    public List<PlatformHistory> Platform_History { get; set; }
+    public List<string> pronounsHistory { get; set; }
+    public string queuedInstance { get; set; }
+    public bool receiveMobileInvitations { get; set; }
+    public string userLanguage { get; set; }
+    public string userLanuageCode { get; set; }
+    public string userLanguageCode { get; set; }
+    public string username { get; set; }
+    public bool usesGeneratedPassword { get; set; }
+    public string viveId { get; set; }
+    public DateTime? accountDeletionLog { get; set; }
+    public string ageVerificationStatus { get; set; }
+    public bool ageVerified { get; set; }
+    public string discordId { get; set; }
+    public string googleId { get; set; }
+    public bool hasSharedConnectionsOptOut { get; set; }
+    public bool hideContentFilterSettings { get; set; }
+    public bool isAdult { get; set; }
+    public bool isBoopingEnabled { get; set; }
+    public string picoId { get; set; }
+
 
     public class DisplayNameEntry
     {
@@ -131,6 +158,14 @@ public class VRCUser
         public string DisplayName { get; set; }
         public bool Reverted { get; set; }
         public string UpdatedAt { get; set; }
+    }
+
+    public class PlatformHistory
+    {
+    bool IsMobile { get; set; }
+    public string platform { get; set; }
+    public DateTime recorded { get; set; }
+
     }
 }
 
