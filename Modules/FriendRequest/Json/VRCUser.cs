@@ -18,6 +18,7 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json;
 public class VRCUser
 {
     // Hopefully this is a complete VRCLocal User i will update as vrchat updates...
+    // updated 3/24/26 9:30pm
     public static VRCUser? CurrentUser;
     public VRCUser(string user)
     {
@@ -34,6 +35,39 @@ public class VRCUser
             Friends = existingFriends.ToList();
         }
         CurrentUser = this;
+        if (UnknownFields?.Count > 0)
+        {
+            foreach (var kv in UnknownFields)
+            {
+                PrintUnknownFields(kv.Key, kv.Value);
+            }
+        }
+    }
+
+
+    [JsonExtensionData]
+    public Dictionary<string, JToken> UnknownFields { get; set; }
+
+    void PrintUnknownFields(string parentPath, JToken token)
+    {
+        switch (token.Type)
+        {
+            case JTokenType.Object:
+                foreach (var prop in token.Children<JProperty>())
+                    PrintUnknownFields(string.IsNullOrEmpty(parentPath) ? prop.Name : parentPath + "." + prop.Name, prop.Value);
+                break;
+            case JTokenType.Array:
+                int index = 0;
+                foreach (var item in token.Children())
+                {
+                    PrintUnknownFields($"{parentPath}[{index}]", item);
+                    index++;
+                }
+                break;
+            default:
+                Console.WriteLine($"[{nameof(VRCUser)}] {Id} => Unknown field: {parentPath} ({token.Type}) = {token}");
+                break;
+        }
     }
 
     public int AcceptedTOSVersion { get; set; }
@@ -118,6 +152,11 @@ public class VRCUser
     public bool isBoopingEnabled { get; set; }
     public string picoId { get; set; }
 
+    public DiscordDetails discordDetails { get; set; }
+    public bool hasAcceptedDiscordSocialSDKPerms { get; set; }
+
+    public bool hasDiscordFriendsOptOut { get; set; }
+    public string appleId { get; set; } 
 
     public class DisplayNameEntry
     {
@@ -162,10 +201,16 @@ public class VRCUser
 
     public class PlatformHistory
     {
-    bool IsMobile { get; set; }
+    public bool IsMobile { get; set; }
     public string platform { get; set; }
     public DateTime recorded { get; set; }
 
+    }
+
+    public class DiscordDetails
+    {
+        public string global_name { get; set; }
+        public string id { get; set; }
     }
 }
 

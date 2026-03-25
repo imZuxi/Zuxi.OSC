@@ -20,13 +20,13 @@ internal class WebsocketWrapper
     private bool _attemptingConnect;
     private readonly Action<string> _onMessageReceved;
     private int _reconnectionAttempts = 0;
-    public WebsocketWrapper(string URI, Action<string> onMessageReceved, Action? onConnected = null)
+    public WebsocketWrapper(string websocketConnectionUrl, Action<string> onMessageReceved, Action? onConnected = null)
     {
         _onMessageReceved = onMessageReceved;
-        _wss = new WebSocket(URI);
+        //  _wss = new WebSocket(URI);
 
-        ConnectionURL = URI.Split('?').First();
-
+         ConnectionURL = websocketConnectionUrl.Split('?').First();
+        _wss = new WebSocket(websocketConnectionUrl);
         _wss.SslConfiguration.EnabledSslProtocols = System.Security.Authentication.SslProtocols.Tls12;
 
         _wss.OnClose += (sender, e) =>
@@ -59,7 +59,7 @@ internal class WebsocketWrapper
     internal void Connect()
     {
         Console.WriteLine("Connecting to: " + ConnectionURL);
-        _wss.Connect();
+        //_wss.Connect();
     }
 
     internal WebsocketWrapper GetInstance()
@@ -88,8 +88,8 @@ internal class WebsocketWrapper
 
             if (_hasConnected)
                 Task.Delay(50000).Wait();
-            if (!_wss.IsAlive)
-                _wss.Connect();
+           // if (!_wss.IsAlive)
+                //_wss.Connect();
         }
         catch (Exception error)
         {

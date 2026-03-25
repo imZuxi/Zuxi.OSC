@@ -18,15 +18,46 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json;
 /// </summary>
 public class VRCPlayer
 {
-    // updated 1/11/25 12:30pm
+    // updated 3/24/26 9:30pm
     // @note i will update periodically
 
     public VRCPlayer(string user)
     {
         JsonConvert.PopulateObject(user, this);
-
+        if (UnknownFields?.Count > 0)
+                {
+            foreach (var kv in UnknownFields)
+            {
+                PrintUnknownFields(kv.Key, kv.Value);
+            }
+        }
     }
+   
 
+    [JsonExtensionData]
+    public Dictionary<string, JToken> UnknownFields { get; set; }
+
+    void PrintUnknownFields(string parentPath, JToken token)
+    {
+        switch (token.Type)
+        {
+            case JTokenType.Object:
+                foreach (var prop in token.Children<JProperty>())
+                    PrintUnknownFields(string.IsNullOrEmpty(parentPath) ? prop.Name : parentPath + "." + prop.Name, prop.Value);
+                break;
+            case JTokenType.Array:
+                int index = 0;
+                foreach (var item in token.Children())
+                {
+                    PrintUnknownFields($"{parentPath}[{index}]", item);
+                    index++;
+                }
+                break;
+            default:
+                Console.WriteLine($"[{nameof(VRCPlayer)}] {Id} => Unknown field: {parentPath} ({token.Type}) = {token}");
+                break;
+        }
+    }
 
 
 #pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
