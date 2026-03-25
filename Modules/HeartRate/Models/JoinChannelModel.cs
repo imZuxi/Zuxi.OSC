@@ -1,7 +1,7 @@
 ﻿// /*
 //  *
 //  * Zuxi.OSC - JoinChannelModel.cs
-//  * Copyright 2023 - 2024 Zuxi and contributors
+//  * Copyright 2023 - 2026 Zuxi and contributors
 //  * https://zuxi.dev
 //  *
 //  */
