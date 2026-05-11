@@ -47,8 +47,6 @@ internal class VRChatAPIClient
 
         _httpClient = new HttpClient(httpClientHandler);
         httpClientHandler.CookieContainer.Add(new Cookie("auth", Config.GetInstance().AuthCookie)
-
-
         { Domain = "api.vrchat.cloud", Path = "/" });
         httpClientHandler.CookieContainer.Add(new Cookie("twoFactorAuth", Config.GetInstance().twoFactorAuthCookie)
         { Domain = "api.vrchat.cloud", Path = "/" });
@@ -204,7 +202,7 @@ internal class VRChatAPIClient
                 {
                     Uri baseUri = new Uri("https://api.vrchat.cloud");
                     APIClient.httpClientHandler.CookieContainer.SetCookies(baseUri, "auth=; expires=Thu, 01 Jan 1970 00:00:00 GMT");
-                    Console.WriteLine("Cleared the 'auth' cookie.");
+                  Console.WriteLine("Cleared the 'auth' cookie.");
                 }
 
                 string authValue = Config.GetInstance().VRCAuthValue;
@@ -297,6 +295,7 @@ internal class VRChatAPIClient
         public static void SaveCreds(VRChatAPIClient APIClient)
         {
             string TempCookie = Config.GetInstance().AuthCookie; // store temporally for when your cookie expires we do not resave it. @note dotnet is weird i thought the cookie should have been ignored but whatever
+            string TemptwoFactorAuthCookie = Config.GetInstance().twoFactorAuthCookie;
             Config.GetInstance().AuthCookie = "";
             Config.GetInstance().twoFactorAuthCookie = "";
             Uri vrChatUri = new Uri("https://api.vrchat.cloud");
@@ -307,7 +306,7 @@ internal class VRChatAPIClient
                 if (cookie.Name == "auth" && !string.IsNullOrEmpty(cookie.Value) && cookie.Value != TempCookie)
                     Config.GetInstance().AuthCookie = cookie.Value;
 
-                if (cookie.Name == "twoFactorAuth" && !string.IsNullOrEmpty(cookie.Value))
+                if (cookie.Name == "twoFactorAuth" && !string.IsNullOrEmpty(cookie.Value) &&  cookie.Value != TemptwoFactorAuthCookie)
                     Config.GetInstance().twoFactorAuthCookie = cookie.Value;
 
                 Console.WriteLine($"Cookie saved: {cookie.Name} = {cookie.Value}");

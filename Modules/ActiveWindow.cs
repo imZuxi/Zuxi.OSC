@@ -33,7 +33,7 @@ namespace Zuxi.OSC.Modules
                     string WindowName = title.ToString();
                     // Console.WriteLine(title);
                     if (WindowName.Contains("Unity")) //AvatarSearch - VRCDefaultWorldScene - Windows, Mac, Linux - Unity 2022.3.22f1* <DX11>
-                    { 
+                    {
                         StringBuilder builder = new StringBuilder(nChars);
 
                         GetFirstIndex(WindowName, '-', out WindowName);
@@ -64,7 +64,7 @@ namespace Zuxi.OSC.Modules
         }
 
         private static readonly string[] BlacklistedWindows =
-            { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass", "Spotify Free" };
+            { "vrchat", "task switching", "search", "BackgroundModeTrayIconClass", "Spotify Free", "Youtube Music Desktop" };
 
         private static void GetLastIndex(string input, char replace, out string output)
         {

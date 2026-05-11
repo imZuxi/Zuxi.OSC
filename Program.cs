@@ -26,9 +26,11 @@ internal class Program
             // Register Ctrl + C
             Console.CancelKeyPress += new ConsoleCancelEventHandler(Console_CancelKeyPress!);
             // Call some modules early to ensure they get the correct info and arent null durring console loop
-            Console.WriteLine(ActiveWindow.Get());
-            Console.WriteLine(MediaPlayback.GetCurrentSong());
-            Console.WriteLine(MediaPlayback.getProgressVisual());
+            Console.WriteLine("Registered CTRL+C Handler");
+            Console.WriteLine("Current Active Window:" + ActiveWindow.Get());
+
+            Console.WriteLine("Current Song: " + MediaPlayback.GetCurrentSong());
+            Console.WriteLine("Current Song Visual: " + MediaPlayback.getProgressVisual());
 
             // Set the current directory to %appdata%/zuxi/apps/Zuxi.OSC
             Directory.SetCurrentDirectory(FileUtils.GetAppFolder());
