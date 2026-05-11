@@ -18,7 +18,7 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json;
 /// </summary>
 public class VRCPlayer
 {
-    // updated 3/24/26 9:30pm
+    // updated 5/11/26 5:47pm EST
     // @note i will update periodically
 
     public VRCPlayer(string user)
@@ -32,7 +32,7 @@ public class VRCPlayer
             }
         }
     }
-   
+
 
     [JsonExtensionData]
     public Dictionary<string, JToken> UnknownFields { get; set; }
@@ -103,6 +103,7 @@ public class VRCPlayer
     public string ProfilePicOverrideThumbnail { get; set; }
     public string Pronouns { get; set; }
     public bool ageVerified { get; set; }
+    public List<string> completedTutorials { get; set; }
 
     public List<Badge> Badges { get; set; }
     [JsonProperty("last_mobile")]

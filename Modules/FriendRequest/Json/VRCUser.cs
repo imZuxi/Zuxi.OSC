@@ -18,7 +18,7 @@ namespace Zuxi.OSC.Modules.FriendRequest.Json;
 public class VRCUser
 {
     // Hopefully this is a complete VRCLocal User i will update as vrchat updates...
-    // updated 3/24/26 9:30pm
+    // updated 5/11/26 5:47pm EST
     public static VRCUser? CurrentUser;
     public VRCUser(string user)
     {
@@ -151,12 +151,12 @@ public class VRCUser
     public bool isAdult { get; set; }
     public bool isBoopingEnabled { get; set; }
     public string picoId { get; set; }
-
+    public List<string> completedTutorials { get; set; }
     public DiscordDetails discordDetails { get; set; }
     public bool hasAcceptedDiscordSocialSDKPerms { get; set; }
 
     public bool hasDiscordFriendsOptOut { get; set; }
-    public string appleId { get; set; } 
+    public string appleId { get; set; }
 
     public class DisplayNameEntry
     {
